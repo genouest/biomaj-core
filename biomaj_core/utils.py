@@ -9,6 +9,7 @@ from subprocess import CalledProcessError
 
 from mimetypes import MimeTypes
 
+
 class Utils(object):
     """
     Utility classes
@@ -66,32 +67,32 @@ class Utils(object):
 
     @staticmethod
     def month_to_num(date):
-        return{
-              'Jan': 1,
-              'Feb': 2,
-              'Mar': 3,
-              'Apr': 4,
-              'May': 5,
-              'Jun': 6,
-              'Jul': 7,
-              'Aug': 8,
-              'Sep': 9,
-              'Oct': 10,
-              'Nov': 11,
-              'Dec': 12,
-              '01': 1,
-              '02': 2,
-              '03': 3,
-              '04': 4,
-              '05': 5,
-              '06': 6,
-              '07': 7,
-              '08': 8,
-              '09': 9,
-              '10': 10,
-              '11': 11,
-              '12': 12
-             }[date]
+        return {
+            'Jan': 1,
+            'Feb': 2,
+            'Mar': 3,
+            'Apr': 4,
+            'May': 5,
+            'Jun': 6,
+            'Jul': 7,
+            'Aug': 8,
+            'Sep': 9,
+            'Oct': 10,
+            'Nov': 11,
+            'Dec': 12,
+            '01': 1,
+            '02': 2,
+            '03': 3,
+            '04': 4,
+            '05': 5,
+            '06': 6,
+            '07': 7,
+            '08': 8,
+            '09': 9,
+            '10': 10,
+            '11': 11,
+            '12': 12
+            }[date]
 
     @staticmethod
     def copy_files(files_to_copy, to_dir, move=False, lock=None):
@@ -115,7 +116,6 @@ class Utils(object):
         :type lock: Lock
         """
         logger = logging.getLogger('biomaj')
-        logger.error('OSALLOU COPYFILES '+str(files_to_copy))
         nb_files = len(files_to_copy)
         cur_files = 1
         for file_to_copy in files_to_copy:

@@ -1,6 +1,5 @@
 from __future__ import print_function
 from future import standard_library
-standard_library.install_aliases()
 from builtins import str
 from builtins import object
 import logging
@@ -12,39 +11,42 @@ import sys
 
 from biomaj_core.bmajindex import BmajIndex
 
+standard_library.install_aliases()
+
+
 class BiomajConfig(object):
     """
     Manage Biomaj configuration
     """
 
     DEFAULTS = {
-    'http.parse.dir.line': r'<img[\s]+src="[\S]+"[\s]+alt="\[DIR\]"[\s]*/?>[\s]*<a[\s]+href="([\S]+)/"[\s]*>.*([\d]{2}-[\w\d]{2,5}-[\d]{4}\s[\d]{2}:[\d]{2})',
-    'http.parse.file.line': r'<img[\s]+src="[\S]+"[\s]+alt="\[[\s]+\]"[\s]*/?>[\s]<a[\s]+href="([\S]+)".*([\d]{2}-[\w\d]{2,5}-[\d]{4}\s[\d]{2}:[\d]{2})[\s]+([\d\.]+[MKG]{0,1})',
-    'http.group.dir.name': 1,
-    'http.group.dir.date': 2,
-    'http.group.file.name': 1,
-    'http.group.file.date': 2,
-    'http.group.file.size': 3,
-    'visibility.default': 'public',
-    'historic.logfile.level': 'INFO',
-    'bank.num.threads': 2,
-    'files.num.threads': 4,
-    'use_elastic': 0,
-    'use_drmaa': 0,
-    'db.type': '',
-    'db.formats': '',
-    'keep.old.version': 1,
-    'docker.sudo': '1',
-    'auto_publish': 0
+        'http.parse.dir.line': r'<img[\s]+src="[\S]+"[\s]+alt="\[DIR\]"[\s]*/?>[\s]*<a[\s]+href="([\S]+)/"[\s]*>.*([\d]{2}-[\w\d]{2,5}-[\d]{4}\s[\d]{2}:[\d]{2})',
+        'http.parse.file.line': r'<img[\s]+src="[\S]+"[\s]+alt="\[[\s]+\]"[\s]*/?>[\s]<a[\s]+href="([\S]+)".*([\d]{2}-[\w\d]{2,5}-[\d]{4}\s[\d]{2}:[\d]{2})[\s]+([\d\.]+[MKG]{0,1})',
+        'http.group.dir.name': 1,
+        'http.group.dir.date': 2,
+        'http.group.file.name': 1,
+        'http.group.file.date': 2,
+        'http.group.file.size': 3,
+        'visibility.default': 'public',
+        'historic.logfile.level': 'INFO',
+        'bank.num.threads': 2,
+        'files.num.threads': 4,
+        'use_elastic': 0,
+        'use_drmaa': 0,
+        'db.type': '',
+        'db.formats': '',
+        'keep.old.version': 1,
+        'docker.sudo': '1',
+        'auto_publish': 0
     }
 
     # Old biomaj level compatibility
     LOGLEVEL = {
-      'DEBUG': logging.DEBUG,
-      'VERBOSE': logging.INFO,
-      'INFO': logging.INFO,
-      'WARN': logging.WARNING,
-      'ERR': logging.ERROR
+        'DEBUG': logging.DEBUG,
+        'VERBOSE': logging.INFO,
+        'INFO': logging.INFO,
+        'WARN': logging.WARNING,
+        'ERR': logging.ERROR
     }
 
     """
@@ -95,7 +97,7 @@ class BiomajConfig(object):
         # ElasticSearch indexation support
         do_index = False
         if BiomajConfig.global_config.get('GENERAL', 'use_elastic') and \
-          BiomajConfig.global_config.get('GENERAL', 'use_elastic') == "1":
+                BiomajConfig.global_config.get('GENERAL', 'use_elastic') == "1":
             do_index = True
         if do_index:
             if BiomajConfig.global_config.get('GENERAL', 'elastic_nodes'):
@@ -107,16 +109,13 @@ class BiomajConfig(object):
                 elastic_index = 'biomaj'
 
             if BiomajConfig.global_config.has_option('GENERAL', 'test') and \
-                BiomajConfig.global_config.get('GENERAL', 'test') == "1":
+                    BiomajConfig.global_config.get('GENERAL', 'test') == "1":
                 # Test connection to elasticsearch, if not available skip indexing for tests
                 BmajIndex.skip_if_failure = True
 
-
-            BmajIndex.load(index=elastic_index, hosts=elastic_hosts,
-                                                    do_index=do_index)
-
-
-
+            BmajIndex.load(index=elastic_index,
+                           hosts=elastic_hosts,
+                           do_index=do_index)
 
     def __init__(self, bank, options=None):
         """
@@ -132,21 +131,21 @@ class BiomajConfig(object):
             BiomajConfig.load_config()
         self.config_bank = configparser.ConfigParser()
         conf_dir = BiomajConfig.global_config.get('GENERAL', 'conf.dir')
-        if not os.path.exists(os.path.join(conf_dir, bank+'.properties')):
+        if not os.path.exists(os.path.join(conf_dir, bank + '.properties')):
             logging.error('Bank configuration file does not exists')
-            raise Exception('Configuration file '+bank+'.properties does not exists')
+            raise Exception('Configuration file ' + bank + '.properties does not exists')
         try:
             config_files = [BiomajConfig.config_file]
             if BiomajConfig.user_config_file is not None:
                 config_files.append(BiomajConfig.user_config_file)
-            config_files.append(os.path.join(conf_dir, bank+'.properties'))
+            config_files.append(os.path.join(conf_dir, bank + '.properties'))
             self.config_bank.read(config_files)
         except Exception as e:
-            print("Configuration file error: "+str(e))
-            logging.error("Configuration file error "+str(e))
+            print("Configuration file error: " + str(e))
+            logging.error("Configuration file error " + str(e))
             sys.exit(1)
 
-        self.last_modified = int(os.stat(os.path.join(conf_dir, bank+'.properties')).st_mtime)
+        self.last_modified = int(os.stat(os.path.join(conf_dir, bank + '.properties')).st_mtime)
 
         if os.path.exists(os.path.expanduser('~/.biomaj.cfg')):
             logging.config.fileConfig(os.path.expanduser('~/.biomaj.cfg'))
@@ -161,14 +160,13 @@ class BiomajConfig(object):
         elif type(options) is dict and 'no_log' in options and not options['no_log']:
             do_log = True
 
-        #if options is None or (( hasattr(options,'no_log') and not options.no_log) or ('no_log' in options and not options['no_log'])):
         if do_log:
             logger = logging.getLogger()
             bank_log_dir = os.path.join(self.get('log.dir'), bank, str(time.time()))
             if not os.path.exists(bank_log_dir):
                 os.makedirs(bank_log_dir)
-            hdlr = logging.FileHandler(os.path.join(bank_log_dir, bank+'.log'))
-            self.log_file = os.path.join(bank_log_dir, bank+'.log')
+            hdlr = logging.FileHandler(os.path.join(bank_log_dir, bank + '.log'))
+            self.log_file = os.path.join(bank_log_dir, bank + '.log')
             if options is not None and options.get_option('log') is not None:
                 hdlr.setLevel(BiomajConfig.LOGLEVEL[options.get_option('log')])
             else:
@@ -214,7 +212,6 @@ class BiomajConfig(object):
 
         if not os.path.exists(lock_dir):
             os.makedirs(lock_dir)
-
 
     def set(self, prop, value, section='GENERAL'):
         self.config_bank.set(section, prop, value)
@@ -262,14 +259,11 @@ class BiomajConfig(object):
 
         return default
 
-
     def get_time(self):
         """
         Return last modification time of config files
         """
         return self.last_modified
-
-
 
     def check(self):
         """
@@ -297,8 +291,6 @@ class BiomajConfig(object):
         if not self.get('cache.dir'):
             logging.error('cache.dir is not set')
             status = False
-
-
         if not self.get('db.fullname'):
             logging.warn('db.fullname is not set')
         if not self.get('db.formats'):
@@ -341,9 +333,9 @@ class BiomajConfig(object):
             protocol = self.get('protocol')
             allowed_protocols = ['none', 'multi', 'local', 'ftp', 'sftp', 'http', 'https', 'directftp', 'directhttp', 'directhttps']
             if protocol not in allowed_protocols:
-                logging.error('Protocol not supported: '+protocol)
+                logging.error('Protocol not supported: ' + protocol)
                 status = False
-            if protocol not in ['multi','none']:
+            if protocol not in ['multi', 'none']:
                 if protocol != 'local' and not self.get('server'):
                     logging.error('server not set')
                     status = False
@@ -371,22 +363,22 @@ class BiomajConfig(object):
                     else:
                         procs = self.get(meta).split(',')
                         for proc in procs:
-                            if not self.get(proc+'.name'):
-                                logging.error('Process '+proc+' not defined')
+                            if not self.get(proc + '.name'):
+                                logging.error('Process ' + proc + ' not defined')
                                 status = False
                             else:
-                                if not self.get(proc+'.exe'):
-                                    logging.error('Process exe for '+proc+' not defined')
+                                if not self.get(proc + '.exe'):
+                                    logging.error('Process exe for ' + proc + ' not defined')
                                     status = False
         # Check blocks
         if self.get('BLOCKS'):
             blocks = self.get('BLOCKS').split(',')
             for block in blocks:
-                if not self.get(block+'.db.post.process'):
-                    logging.error('Block '+block+' not defined')
+                if not self.get(block + '.db.post.process'):
+                    logging.error('Block ' + block + ' not defined')
                     status = False
                 else:
-                    metas = self.get(block+'.db.post.process').split(',')
+                    metas = self.get(block + '.db.post.process').split(',')
                     for meta in metas:
                         if not self.get(meta):
                             logging.error('Metaprocess ' + meta + ' not defined')
@@ -394,11 +386,11 @@ class BiomajConfig(object):
                         else:
                             procs = self.get(meta).split(',')
                             for proc in procs:
-                                if not self.get(proc+'.name'):
-                                    logging.error('Process '+proc+' not defined')
+                                if not self.get(proc + '.name'):
+                                    logging.error('Process ' + proc + ' not defined')
                                     status = False
                                 else:
-                                    if not self.get(proc+'.exe'):
-                                        logging.error('Process exe for '+proc+' not defined')
+                                    if not self.get(proc + '.exe'):
+                                        logging.error('Process exe for ' + proc + ' not defined')
                                         status = False
         return status

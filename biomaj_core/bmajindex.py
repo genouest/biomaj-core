@@ -4,11 +4,11 @@ import logging
 import copy
 from elasticsearch import Elasticsearch
 
+
 class BmajIndex(object):
     """
     ElasticSearch indexation and search
     """
-
 
     """
     ElasticSearch server
@@ -50,16 +50,16 @@ class BmajIndex(object):
             BmajIndex.es = Elasticsearch(hosts)
 
             mapping = {
-              "mappings": {
+                "mappings": {
                     "production": {
-                      "date_detection": False
+                        "date_detection": False
                     },
                     "releasestats": {
-                      "date_detection": False,
-                      "_timestamp" : {
-                        "enabled" : True,
-                        "store" : True
-                      }
+                        "date_detection": False,
+                        "_timestamp": {
+                            "enabled": True,
+                            "store": True
+                        }
                     }
                 }
             }
@@ -76,18 +76,25 @@ class BmajIndex(object):
     @staticmethod
     def _bulk_delete(query, flush=True):
         try:
-            page = BmajIndex.es.search(index=BmajIndex.index,
-                 doc_type='production',
-                 search_type = "query_then_fetch",
-                 size=1000,
-                 body= {'query': {'match': {'bank': query['bank']}}})
+            page = BmajIndex.es.search(
+                index=BmajIndex.index,
+                doc_type='production',
+                search_type="query_then_fetch",
+                size=1000,
+                body={
+                    'query': {
+                        'match': {
+                            'bank': query['bank']
+                        }
+                    }
+                })
 
             if page is None:
                 return
             bulk_delete = ''
             for del_hit in page['hits']['hits']:
                 if ('release' in query and query['release'] == del_hit['_source']['release']) or 'release' not in query:
-                   bulk_delete += "{ \"delete\" : {\"_index\":\""+BmajIndex.index+"\",\"_type\":\"production\", \"_id\" : \""+del_hit['_id']+"\" } }\n"
+                    bulk_delete += "{ \"delete\" : {\"_index\":\"" + BmajIndex.index + "\",\"_type\":\"production\", \"_id\" : \"" + del_hit['_id'] + "\" } }\n"
             if bulk_delete:
                 BmajIndex.es.bulk(body=bulk_delete)
                 if flush:
@@ -98,7 +105,6 @@ class BmajIndex(object):
             else:
                 raise e
 
-
     @staticmethod
     def delete_all_bank(bank_name):
         """
@@ -106,21 +112,7 @@ class BmajIndex(object):
         """
         if not BmajIndex.do_index:
             return
-        BmajIndex._bulk_delete({"bank" : bank_name}, True)
-        """
-        query = {
-          "query" : {
-            "term" : {"bank" : bank_name}
-            }
-          }
-        try:
-            BmajIndex.es.delete_by_query(index=BmajIndex.index, body=query)
-        except Exception as e:
-            if BmajIndex.skip_if_failure:
-                BmajIndex.do_index = False
-            else:
-                raise e
-        """
+        BmajIndex._bulk_delete({"bank": bank_name}, True)
 
     @staticmethod
     def remove(bank_name, release):
@@ -134,7 +126,7 @@ class BmajIndex(object):
         """
         if not BmajIndex.do_index:
             return
-        BmajIndex._bulk_delete({"release" : release, "bank": bank_name})
+        BmajIndex._bulk_delete({"release": release, "bank": bank_name})
         """
         try:
             query = {
@@ -155,7 +147,7 @@ class BmajIndex(object):
             return None
         res = BmajIndex.es.search(index=BmajIndex.index,
                                   doc_type='production',
-                                  search_type = "query_then_fetch",
+                                  search_type="query_then_fetch",
                                   body=query)
         return res['hits']['hits']
 
@@ -184,7 +176,6 @@ class BmajIndex(object):
             return
         if stat['release'] is None or stat['bank'] is None:
             return False
-        #stat['bank'] = bank_name
         try:
             BmajIndex.es.index(index=BmajIndex.index, doc_type='releasestats', id=stat_id, body=stat)
         except Exception:
@@ -193,7 +184,6 @@ class BmajIndex(object):
             else:
                 return False
         return True
-
 
     @staticmethod
     def add(bank_name, prod, flush=False):
@@ -222,10 +212,10 @@ class BmajIndex(object):
                     elt['release'] = obj['release']
                     if 'status' in obj:
                         elt['status'] = obj['status']
-                    res = BmajIndex.es.index(index=BmajIndex.index, doc_type='production', body=elt)
+                    BmajIndex.es.index(index=BmajIndex.index, doc_type='production', body=elt)
             if flush:
                 BmajIndex.es.indices.flush(index=BmajIndex.index, force=True)
         except Exception as e:
-            logging.error('Index:Add:'+bank_name+'_'+str(obj['release'])+':Exception:'+str(e))
+            logging.error('Index:Add:' + bank_name + '_' + str(obj['release']) + ':Exception:' + str(e))
             if BmajIndex.skip_if_failure:
                 BmajIndex.do_index = False
