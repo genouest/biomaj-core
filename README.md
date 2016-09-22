@@ -1,0 +1,3 @@
+# Biomaj
+
+Biomaj core library
