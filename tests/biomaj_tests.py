@@ -18,9 +18,6 @@ from biomaj_core.config import BiomajConfig
 from biomaj_core.utils import Utils
 from biomaj_core.bmajindex import BmajIndex
 
-from ldap3.core.exceptions import LDAPBindError
-
-
 import unittest
 
 class UtilsForTest():
