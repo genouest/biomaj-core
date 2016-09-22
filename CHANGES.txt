@@ -1,3 +1,5 @@
+3.0.4:
+  Code cleanup
 3.0.3:
   Put index management in core
 3.0.2:
