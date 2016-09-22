@@ -16,7 +16,7 @@ from optparse import OptionParser
 
 from biomaj_core.config import BiomajConfig
 from biomaj_core.utils import Utils
-from biomaj.bmajindex import BmajIndex
+from biomaj_core.bmajindex import BmajIndex
 
 from ldap3.core.exceptions import LDAPBindError
 
