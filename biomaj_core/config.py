@@ -10,7 +10,7 @@ import configparser
 import time
 import sys
 
-from biomaj.bmajindex import BmajIndex
+from biomaj_core.bmajindex import BmajIndex
 
 class BiomajConfig(object):
     """
