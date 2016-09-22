@@ -1,3 +1,5 @@
+3.0.2:
+  Add missing deps
 3.0.1:
   Add README etc..
 3.0.0:
