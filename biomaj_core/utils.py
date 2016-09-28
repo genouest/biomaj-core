@@ -18,6 +18,23 @@ class Utils(object):
     mime = None
 
     @staticmethod
+    def service_config_override(config):
+        if 'RABBITMQ_HOST' in os.environ and os.environ['RABBITMQ_HOST']:
+            config['rabbitmq']['host'] = os.environ['RABBITMQ_HOST']
+        if 'REDIS_HOST' in os.environ and os.environ['REDIS_HOST']:
+            config['redis']['host'] = os.environ['REDIS_HOST']
+        if 'REDIS_PORT' in os.environ and os.environ['REDIS_PORT']:
+            config['redis']['port'] = int(os.environ['REDIS_PORT'])
+        if 'CONSUL_HOST' in os.environ and os.environ['CONSUL_HOST']:
+            config['consul']['host'] = os.environ['CONSUL_HOST']
+        if 'CONSUL_ID' in os.environ and os.environ['CONSUL_ID']:
+            config['consul']['id'] = os.environ['CONSUL_ID']
+        if 'WEB_PORT' in os.environ and os.environ['WEB_PORT']:
+            config['web']['port'] = int(os.environ['WEB_PORT'])
+        if 'WEB_LOCAL_ENDPOINT' in os.environ and os.environ['WEB_LOCAL_ENDPOINT']:
+            config['web']['local_endpoint'] = os.environ['WEB_LOCAL_ENDPOINT']
+
+    @staticmethod
     def get_folder_size(folder):
         """
         Get directory path full size

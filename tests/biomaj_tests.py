@@ -128,42 +128,51 @@ class UtilsForTest():
 
 class TestBiomajUtils(unittest.TestCase):
 
-  def setUp(self):
-    self.utils = UtilsForTest()
+    def setUp(self):
+        self.utils = UtilsForTest()
 
-  def tearDown(self):
-    self.utils.clean()
+    def tearDown(self):
+        self.utils.clean()
 
+    def test_service_config_override(self):
+        config = {
+            'rabbitmq': { 'host': '1.2.3.4'}
+        }
+        Utils.service_config_override(config)
+        self.assertTrue(config['rabbitmq']['host'] == '1.2.3.4')
+        os.environ['RABBITMQ_HOST'] = '4.3.2.1'
+        Utils.service_config_override(config)
+        self.assertTrue(config['rabbitmq']['host'] == '4.3.2.1')
 
-  def test_mimes(self):
-    fasta_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),'bank/test2.fasta')
-    (mime, encoding) = Utils.detect_format(fasta_file)
-    self.assertTrue('application/fasta' == mime)
+    def test_mimes(self):
+        fasta_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),'bank/test2.fasta')
+        (mime, encoding) = Utils.detect_format(fasta_file)
+        self.assertTrue('application/fasta' == mime)
 
-  @attr('compress')
-  def test_uncompress(self):
-    from_file = { 'root': os.path.dirname(os.path.realpath(__file__)),
-                  'name': 'bank/test.fasta.gz'
-                  }
+    @attr('compress')
+    def test_uncompress(self):
+        from_file = { 'root': os.path.dirname(os.path.realpath(__file__)),
+                      'name': 'bank/test.fasta.gz'
+                      }
 
-    to_dir = self.utils.data_dir
-    Utils.copy_files([from_file], to_dir)
-    Utils.uncompress(os.path.join(to_dir, from_file['name']))
-    self.assertTrue(os.path.exists(to_dir+'/bank/test.fasta'))
+        to_dir = self.utils.data_dir
+        Utils.copy_files([from_file], to_dir)
+        Utils.uncompress(os.path.join(to_dir, from_file['name']))
+        self.assertTrue(os.path.exists(to_dir+'/bank/test.fasta'))
 
-  def test_copy_with_regexp(self):
-    from_dir = os.path.dirname(os.path.realpath(__file__))
-    to_dir = self.utils.data_dir
-    Utils.copy_files_with_regexp(from_dir, to_dir, ['.*\.py'])
-    self.assertTrue(os.path.exists(to_dir+'/biomaj_tests.py'))
+    def test_copy_with_regexp(self):
+        from_dir = os.path.dirname(os.path.realpath(__file__))
+        to_dir = self.utils.data_dir
+        Utils.copy_files_with_regexp(from_dir, to_dir, ['.*\.py'])
+        self.assertTrue(os.path.exists(to_dir+'/biomaj_tests.py'))
 
-  def test_copy(self):
-    from_dir = os.path.dirname(os.path.realpath(__file__))
-    local_file = 'biomaj_tests.py'
-    files_to_copy = [ {'root': from_dir, 'name': local_file}]
-    to_dir = self.utils.data_dir
-    Utils.copy_files(files_to_copy, to_dir)
-    self.assertTrue(os.path.exists(to_dir+'/biomaj_tests.py'))
+    def test_copy(self):
+        from_dir = os.path.dirname(os.path.realpath(__file__))
+        local_file = 'biomaj_tests.py'
+        files_to_copy = [ {'root': from_dir, 'name': local_file}]
+        to_dir = self.utils.data_dir
+        Utils.copy_files(files_to_copy, to_dir)
+        self.assertTrue(os.path.exists(to_dir+'/biomaj_tests.py'))
 
 
 @attr('elastic')
