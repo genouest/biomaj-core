@@ -21,12 +21,8 @@ config = {
     'url': 'http://biomaj.genouest.org',
     'download_url': 'http://biomaj.genouest.org',
     'author_email': 'olivier.sallou@irisa.fr',
-    'version': '3.0.4',
+    'version': '3.0.5',
      'classifiers': [
-        # How mature is this project? Common values are
-        #   3 - Alpha
-        #   4 - Beta
-        #   5 - Production/Stable
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Natural Language :: English',
@@ -43,11 +39,12 @@ config = {
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4'
     ],
-    'install_requires': ['nose',
-                         'mock',
+    'install_requires': [
                          'future',
                          'elasticsearch'
-                         ],
+                        ],
+    'tests_require': ['nose', 'mock'],
+    'test_suite': 'nose.collector',
     'packages': find_packages(),
     'include_package_data': True,
     'name': 'biomaj_core'
