@@ -58,6 +58,7 @@ class BiomajConfig(object):
     Per use global configuration file, overriding global_config
     """
     user_config = None
+    allow_user_config = False
 
     @staticmethod
     def load_config(config_file=None, allow_user_config=True):
@@ -69,6 +70,8 @@ class BiomajConfig(object):
         :param allow_user_config: use ~/.biomaj.cfg if present
         :type allow_user_config: bool
         """
+        BiomajConfig.allow_user_config = allow_user_config
+
         if config_file is None:
             env_file = os.environ.get('BIOMAJ_CONF')
             if env_file is not None and os.path.exists(env_file):
@@ -85,12 +88,12 @@ class BiomajConfig(object):
 
         BiomajConfig.global_config = configparser.ConfigParser()
 
-        if allow_user_config and os.path.exists(os.path.expanduser('~/.biomaj.cfg')):
-            BiomajConfig.user_config_file = os.path.expanduser('~/.biomaj.cfg')
-            BiomajConfig.user_config = configparser.ConfigParser()
-            BiomajConfig.user_config.read([os.path.expanduser('~/.biomaj.cfg')])
-        else:
-            BiomajConfig.user_config_file = None
+        #if allow_user_config and os.path.exists(os.path.expanduser('~/.biomaj.cfg')):
+        #    BiomajConfig.user_config_file = os.path.expanduser('~/.biomaj.cfg')
+        #    BiomajConfig.user_config = configparser.ConfigParser()
+        #    BiomajConfig.user_config.read([os.path.expanduser('~/.biomaj.cfg')])
+        #else:
+        #    BiomajConfig.user_config_file = None
 
         BiomajConfig.global_config.read([config_file])
 
@@ -136,8 +139,14 @@ class BiomajConfig(object):
             raise Exception('Configuration file ' + bank + '.properties does not exists')
         try:
             config_files = [BiomajConfig.config_file]
-            if BiomajConfig.user_config_file is not None:
-                config_files.append(BiomajConfig.user_config_file)
+            self.user_config_file = None
+            if self.allow_user_config and hasattr(options, 'user') and options.user  and os.path.exists(os.path.expanduser('~' + options.user + '/.biomaj.cfg')):
+                self.user_config_file = os.path.expanduser('~/' + options.user+ '.biomaj.cfg')
+                self.user_config = configparser.ConfigParser()
+                self.user_config.read([os.path.expanduser('~/' + options.user + '.biomaj.cfg')])
+
+            if self.user_config_file is not None:
+                config_files.append(self.user_config_file)
             config_files.append(os.path.join(conf_dir, bank + '.properties'))
             self.config_bank.read(config_files)
         except Exception as e:
@@ -247,9 +256,9 @@ class BiomajConfig(object):
                 val = val.replace('\\\\', '\\')
             return val
 
-        if BiomajConfig.user_config is not None:
-            if BiomajConfig.user_config.has_option(section, prop):
-                return BiomajConfig.user_config.get(section, prop)
+        if self.user_config is not None:
+            if self.user_config.has_option(section, prop):
+                return self.user_config.get(section, prop)
 
         if BiomajConfig.global_config.has_option(section, prop):
             return BiomajConfig.global_config.get(section, prop)
