@@ -88,11 +88,11 @@ class BiomajConfig(object):
 
         BiomajConfig.global_config = configparser.ConfigParser()
 
-        #if allow_user_config and os.path.exists(os.path.expanduser('~/.biomaj.cfg')):
+        # if allow_user_config and os.path.exists(os.path.expanduser('~/.biomaj.cfg')):
         #    BiomajConfig.user_config_file = os.path.expanduser('~/.biomaj.cfg')
         #    BiomajConfig.user_config = configparser.ConfigParser()
         #    BiomajConfig.user_config.read([os.path.expanduser('~/.biomaj.cfg')])
-        #else:
+        # else:
         #    BiomajConfig.user_config_file = None
 
         BiomajConfig.global_config.read([config_file])
@@ -140,8 +140,8 @@ class BiomajConfig(object):
         try:
             config_files = [BiomajConfig.config_file]
             self.user_config_file = None
-            if self.allow_user_config and hasattr(options, 'user') and options.user  and os.path.exists(os.path.expanduser('~' + options.user + '/.biomaj.cfg')):
-                self.user_config_file = os.path.expanduser('~/' + options.user+ '.biomaj.cfg')
+            if self.allow_user_config and hasattr(options, 'user') and options.user and os.path.exists(os.path.expanduser('~' + options.user + '/.biomaj.cfg')):
+                self.user_config_file = os.path.expanduser('~/' + options.user + '.biomaj.cfg')
                 self.user_config = configparser.ConfigParser()
                 self.user_config.read([os.path.expanduser('~/' + options.user + '.biomaj.cfg')])
 
