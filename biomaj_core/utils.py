@@ -6,6 +6,7 @@ import datetime
 import time
 import subprocess
 from subprocess import CalledProcessError
+import socket
 
 from mimetypes import MimeTypes
 
@@ -21,6 +22,21 @@ class Utils(object):
     def service_config_override(config):
         if 'RABBITMQ_HOST' in os.environ and os.environ['RABBITMQ_HOST']:
             config['rabbitmq']['host'] = os.environ['RABBITMQ_HOST']
+        if 'RABBITMQ_PORT' in os.environ and os.environ['RABBITMQ_PORT']:
+            config['rabbitmq']['port'] = int(os.environ['RABBITMQ_PORT'])
+        if 'RABBITMQ_USER' in os.environ and os.environ['RABBITMQ_USER']:
+            config['rabbitmq']['user'] = os.environ['RABBITMQ_USER']
+        if 'RABBITMQ_PASSWORD' in os.environ and os.environ['RABBITMQ_PASSWORD']:
+            config['rabbitmq']['password'] = os.environ['RABBITMQ_PASSWORD']
+        if 'RABBITMQ_VHOST' in os.environ and os.environ['RABBITMQ_VHOST']:
+            config['rabbitmq']['virtual_host'] = os.environ['RABBITMQ_VHOST']
+        if 'consul' not in config:
+            config['consul'] = {'host': None, 'id': None}
+        if not config['consul']['id']:
+            if 'HOSTNAME' in os.environ and os.environ['HOSTNAME']:
+                config['consul']['id'] = os.environ['HOSTNAME']
+            else:
+                config['consul']['id'] = socket.gethostname()
         if 'REDIS_HOST' in os.environ and os.environ['REDIS_HOST']:
             config['redis']['host'] = os.environ['REDIS_HOST']
         if 'REDIS_PORT' in os.environ and os.environ['REDIS_PORT']:
