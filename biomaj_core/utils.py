@@ -37,6 +37,19 @@ class Utils(object):
                 config['consul']['id'] = os.environ['HOSTNAME']
             else:
                 config['consul']['id'] = socket.gethostname()
+
+        if 'web' not in config:
+            config['web'] = {}
+        if 'BIOMAJ_HOSTNAME' in os.environ and os.environ['BIOMAJ_HOSTNAME']:
+            config['web']['hostname'] = os.environ['BIOMAJ_HOSTNAME']
+        else:
+            if 'HOSTNAME' in os.environ and os.environ['HOSTNAME']:
+                config['web']['hostname'] = os.environ['HOSTNAME']
+            else:
+                config['web']['hostname'] = socket.gethostname()
+ 
+
+
         if 'REDIS_HOST' in os.environ and os.environ['REDIS_HOST']:
             config['redis']['host'] = os.environ['REDIS_HOST']
         if 'REDIS_PORT' in os.environ and os.environ['REDIS_PORT']:
