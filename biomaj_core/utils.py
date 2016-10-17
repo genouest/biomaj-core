@@ -47,8 +47,6 @@ class Utils(object):
                 config['web']['hostname'] = os.environ['HOSTNAME']
             else:
                 config['web']['hostname'] = socket.gethostname()
- 
-
 
         if 'REDIS_HOST' in os.environ and os.environ['REDIS_HOST']:
             config['redis']['host'] = os.environ['REDIS_HOST']
