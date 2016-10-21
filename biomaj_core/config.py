@@ -136,7 +136,7 @@ class BiomajConfig(object):
         conf_dir = BiomajConfig.global_config.get('GENERAL', 'conf.dir')
         if not os.path.exists(os.path.join(conf_dir, bank + '.properties')):
             logging.error('Bank configuration file does not exists')
-            raise Exception('Configuration file ' + bank + '.properties does not exists')
+            raise Exception('Configuration file ' + bank + '.properties does not exists config_dir= '+str(conf_dir))
         try:
             config_files = [BiomajConfig.config_file]
             self.user_config_file = None
