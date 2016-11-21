@@ -53,7 +53,7 @@ class Utils(object):
         if 'REDIS_PORT' in os.environ and os.environ['REDIS_PORT']:
             config['redis']['port'] = int(os.environ['REDIS_PORT'])
         if 'REDIS_PREFIX' in os.environ and os.environ['REDIS_PREFIX']:
-            config['redis']['prefix'] = int(os.environ['REDIS_PREFIX'])
+            config['redis']['prefix'] = os.environ['REDIS_PREFIX']
         if 'CONSUL_HOST' in os.environ and os.environ['CONSUL_HOST']:
             config['consul']['host'] = os.environ['CONSUL_HOST']
         if 'CONSUL_ID' in os.environ and os.environ['CONSUL_ID']:
