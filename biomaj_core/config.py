@@ -5,11 +5,15 @@ from builtins import object
 import logging
 import logging.config
 import os
-import configparser
 import time
 import sys
 
 from biomaj_core.bmajindex import BmajIndex
+
+if sys.version < '3':
+    import ConfigParser as configparser
+else:
+    import configparser
 
 standard_library.install_aliases()
 
