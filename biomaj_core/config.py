@@ -317,7 +317,7 @@ class BiomajConfig(object):
                 logging.error('use_elastic set to 1 but missing configuration')
                 status = False
 
-        #if not self.get('celery.queue') or not self.get('celery.broker'):
+        # if not self.get('celery.queue') or not self.get('celery.broker'):
         #    logging.warn('celery config is not set, that\'s fine if you do not use Celery for background tasks')
 
         if not self.get('mail.smtp.host'):
