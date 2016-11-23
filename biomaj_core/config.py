@@ -322,7 +322,6 @@ class BiomajConfig(object):
 
         if not self.get('mail.smtp.host'):
             logging.warn('SMTP mail config not set, you will not be able to send emails')
-            status = False
         if self.get('mail.smtp.host') and not self.get('mail.from'):
             logging.error('Mail origin mail.from not set')
             status = False
