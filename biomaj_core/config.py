@@ -233,7 +233,7 @@ class BiomajConfig(object):
         '''
         Search for env variable BIOMAJ_X_Y_Z for property X.Y.Z
         '''
-        env_prop = 'BIOMAJ_' + prop.upper().replace('.','_')
+        env_prop = 'BIOMAJ_' + prop.upper().replace('.', '_')
         if env_prop in os.environ:
             return os.environ[env_prop]
         else:
@@ -246,7 +246,7 @@ class BiomajConfig(object):
         value = None
 
         if self._in_env(prop):
-            value = _in_env(prop)
+            value = self._in_env(prop)
         else:
             value = self.get(prop, section, escape, default)
 
