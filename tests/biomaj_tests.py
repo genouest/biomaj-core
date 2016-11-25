@@ -134,6 +134,15 @@ class TestBiomajUtils(unittest.TestCase):
     def tearDown(self):
         self.utils.clean()
 
+    def test_properties_override(self):
+        BiomajConfig.load_config(self.utils.global_properties, allow_user_config=False)
+        config = BiomajConfig('local')
+        ldap_host = config.get('ldap.host')
+        self.assertTrue(ldap_host == 'localhost')
+        os.environ['BIOMAJ_LDAP_HOST'] = 'someserver'
+        ldap_host = config.get('ldap.host')
+        self.assertTrue(ldap_host == 'someserver')
+
     def test_service_config_override(self):
         config = {
             'rabbitmq': { 'host': '1.2.3.4'}

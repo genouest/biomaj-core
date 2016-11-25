@@ -229,11 +229,27 @@ class BiomajConfig(object):
     def set(self, prop, value, section='GENERAL'):
         self.config_bank.set(section, prop, value)
 
+    def _in_env(self, prop):
+        '''
+        Search for env variable BIOMAJ_X_Y_Z for property X.Y.Z
+        '''
+        env_prop = 'BIOMAJ_' + prop.upper().replace('.','_')
+        if env_prop in os.environ:
+            return os.environ[env_prop]
+        else:
+            return None
+
     def get_bool(self, prop, section='GENERAL', escape=True, default=None):
         """
         Get a boolean property from bank or general configration. Optionally in section.
         """
-        value = self.get(prop, section, escape, default)
+        value = None
+
+        if self._in_env(prop):
+            value = _in_env(prop)
+        else:
+            value = self.get(prop, section, escape, default)
+
         if value is None:
             return False
         if value is True or value == 'true' or value == '1':
@@ -245,6 +261,8 @@ class BiomajConfig(object):
         """
         Get a property from bank or general configration. Optionally in section.
         """
+        if self._in_env(prop):
+            return self._in_env(prop)
         # Compatibility fields
         if prop == 'depends':
             depend = self.get('db.source', section, escape, None)
