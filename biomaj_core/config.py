@@ -133,6 +133,7 @@ class BiomajConfig(object):
         :param options: bank options
         :type options: argparse
         """
+        self.log_level = logging.INFO
         self.name = bank
         if BiomajConfig.global_config is None:
             BiomajConfig.load_config()
@@ -160,11 +161,6 @@ class BiomajConfig(object):
 
         self.last_modified = int(os.stat(os.path.join(conf_dir, bank + '.properties')).st_mtime)
 
-        if os.path.exists(os.path.expanduser('~/.biomaj.cfg')):
-            logging.config.fileConfig(os.path.expanduser('~/.biomaj.cfg'))
-        else:
-            logging.config.fileConfig(BiomajConfig.config_file)
-
         do_log = False
         if options is None:
             do_log = True
@@ -174,6 +170,11 @@ class BiomajConfig(object):
             do_log = True
 
         if do_log:
+            if os.path.exists(os.path.expanduser('~/.biomaj.cfg')):
+                logging.config.fileConfig(os.path.expanduser('~/.biomaj.cfg'))
+            else:
+                logging.config.fileConfig(BiomajConfig.config_file)
+
             logger = logging.getLogger()
             bank_log_dir = os.path.join(self.get('log.dir'), bank, str(time.time()))
             if not os.path.exists(bank_log_dir):
@@ -182,8 +183,10 @@ class BiomajConfig(object):
             self.log_file = os.path.join(bank_log_dir, bank + '.log')
             if options is not None and options.get_option('log') is not None:
                 hdlr.setLevel(BiomajConfig.LOGLEVEL[options.get_option('log')])
+                self.log_level = BiomajConfig.LOGLEVEL[options.get_option('log')]
             else:
                 hdlr.setLevel(BiomajConfig.LOGLEVEL[self.get('historic.logfile.level')])
+                self.log_level = BiomajConfig.LOGLEVEL[self.get('historic.logfile.level')]
             formatter = logging.Formatter('%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s')
             hdlr.setFormatter(formatter)
             logger.addHandler(hdlr)
@@ -225,6 +228,24 @@ class BiomajConfig(object):
 
         if not os.path.exists(lock_dir):
             os.makedirs(lock_dir)
+
+    def reset_logger(self):
+        '''
+        Reconfigure logging
+        '''
+        if self.log_file == 'none':
+            return
+        if os.path.exists(os.path.expanduser('~/.biomaj.cfg')):
+            logging.config.fileConfig(os.path.expanduser('~/.biomaj.cfg'))
+        else:
+            logging.config.fileConfig(BiomajConfig.config_file)
+
+        logger = logging.getLogger()
+        hdlr = logging.FileHandler(self.log_file)
+        hdlr.setLevel(self.log_level)
+        formatter = logging.Formatter('%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s')
+        hdlr.setFormatter(formatter)
+        logger.addHandler(hdlr)
 
     def set(self, prop, value, section='GENERAL'):
         self.config_bank.set(section, prop, value)

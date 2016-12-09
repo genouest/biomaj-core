@@ -1,3 +1,5 @@
+3.0.7:
+  set logging only if necessary
 3.0.6:
   Fix configparser import for python 2 vs 3
 3.0.5:
