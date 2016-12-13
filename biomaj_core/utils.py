@@ -48,6 +48,13 @@ class Utils(object):
             else:
                 config['web']['hostname'] = socket.gethostname()
 
+        if 'docker' not in config:
+            config['docker'] = {}
+        if 'DOCKER_URL' in os.environ and os.environ['DOCKER_URL']:
+            config['docker']['url'] = os.environ['DOCKER_URL']
+        else:
+            config['docker']['url'] = None
+
         if 'REDIS_HOST' in os.environ and os.environ['REDIS_HOST']:
             config['redis']['host'] = os.environ['REDIS_HOST']
         if 'REDIS_PORT' in os.environ and os.environ['REDIS_PORT']:

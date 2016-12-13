@@ -1,3 +1,5 @@
+3.0.8:
+  Add DOCKER_URL env variable in override
 3.0.7:
   set logging only if necessary
 3.0.6:
