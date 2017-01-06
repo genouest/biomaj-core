@@ -56,10 +56,6 @@ class BmajIndex(object):
                     },
                     "releasestats": {
                         "date_detection": False,
-                        "_timestamp": {
-                            "enabled": True,
-                            "store": True
-                        }
                     }
                 }
             }
