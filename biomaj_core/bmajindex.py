@@ -63,11 +63,7 @@ class BmajIndex(object):
                 if not BmajIndex.es.indices.exists(index=BmajIndex.index):
                     BmajIndex.es.indices.create(index=BmajIndex.index, body=mapping)
             except Exception as e:
-                logging.error('ElasticSearch connection error, check server is running and configuration')
-                if BmajIndex.skip_if_failure:
-                    BmajIndex.do_index = False
-                else:
-                    raise e
+                logging.error('ElasticSearch connection error, check server is running and configuration: ' + str(e))
 
     @staticmethod
     def _bulk_delete(query, flush=True):
@@ -99,7 +95,7 @@ class BmajIndex(object):
             if BmajIndex.skip_if_failure:
                 BmajIndex.do_index = False
             else:
-                raise e
+                logging.error
 
     @staticmethod
     def delete_all_bank(bank_name):

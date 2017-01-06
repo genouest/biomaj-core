@@ -1,5 +1,6 @@
 3.0.8:
   Add DOCKER_URL, MONGO_URL, MONGO_DB env variable in override
+  Do not fail on elasticsearch index creation, just log
 3.0.7:
   set logging only if necessary
 3.0.6:
