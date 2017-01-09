@@ -85,6 +85,8 @@ class BiomajConfig(object):
                 if os.path.exists(env_file):
                     config_file = env_file
 
+        print("#DEBUG "+str(config_file))
+
         if config_file is None or not os.path.exists(config_file):
             raise Exception('Missing global configuration file')
 
@@ -123,6 +125,7 @@ class BiomajConfig(object):
             BmajIndex.load(index=elastic_index,
                            hosts=elastic_hosts,
                            do_index=do_index)
+        print("# End of DEBUG config")
 
     def __init__(self, bank, options=None):
         """
@@ -382,7 +385,7 @@ class BiomajConfig(object):
             status = False
         else:
             protocol = self.get('protocol')
-            allowed_protocols = ['none', 'multi', 'local', 'ftp', 'sftp', 'http', 'https', 'directftp', 'directhttp', 'directhttps']
+            allowed_protocols = ['none', 'multi', 'local', 'ftp', 'sftp', 'http', 'https', 'directftp', 'directhttp', 'directhttps', 'rsync']
             if protocol not in allowed_protocols:
                 logging.error('Protocol not supported: ' + protocol)
                 status = False
