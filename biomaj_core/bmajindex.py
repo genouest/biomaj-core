@@ -95,7 +95,7 @@ class BmajIndex(object):
             if BmajIndex.skip_if_failure:
                 BmajIndex.do_index = False
             else:
-                logging.error
+                logging.error('Failed to delete bank index: ' + str(e))
 
     @staticmethod
     def delete_all_bank(bank_name):
