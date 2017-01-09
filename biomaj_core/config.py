@@ -155,9 +155,8 @@ class BiomajConfig(object):
             config_files.append(os.path.join(conf_dir, bank + '.properties'))
             self.config_bank.read(config_files)
         except Exception as e:
-            print("Configuration file error: " + str(e))
             logging.error("Configuration file error " + str(e))
-            sys.exit(1)
+            raise Exception("Configuration file error " + str(e))
 
         self.last_modified = int(os.stat(os.path.join(conf_dir, bank + '.properties')).st_mtime)
 
@@ -190,6 +189,16 @@ class BiomajConfig(object):
             formatter = logging.Formatter('%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s')
             hdlr.setFormatter(formatter)
             logger.addHandler(hdlr)
+            '''
+            # For monolithic, update default logger/handlers?
+            existing_logger_names = list(logging.getLogger().manager.loggerDict.keys())
+            for existing_logger in existing_logger_names:
+                if existing_logger.startswith('biomaj'):
+                    tmp_logger = logging.getLogger(existing_logger)
+                    tmp_logger.setLevel(self.log_level)
+                    for handler in tmp_logger.handlers:
+                        handler.setLevel(self.log_level)
+            '''
         else:
             self.log_file = 'none'
 

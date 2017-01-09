@@ -69,6 +69,12 @@ class Utils(object):
             config['web']['port'] = int(os.environ['WEB_PORT'])
         if 'WEB_LOCAL_ENDPOINT' in os.environ and os.environ['WEB_LOCAL_ENDPOINT']:
             config['web']['local_endpoint'] = os.environ['WEB_LOCAL_ENDPOINT']
+        if 'mongo' not in config:
+            config['mongo'] = {'url': None, 'db': 'biomaj'}
+        if 'MONGO_URL' in os.environ and os.environ['MONGO_URL']:
+            config['mongo']['url'] = os.environ['MONGO_URL']
+        if 'MONGO_DB' in os.environ and os.environ['MONGO_DB']:
+            config['mongo']['db'] = os.environ['MONGO_DB']
 
     @staticmethod
     def get_folder_size(folder):
