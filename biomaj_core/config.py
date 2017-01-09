@@ -155,9 +155,8 @@ class BiomajConfig(object):
             config_files.append(os.path.join(conf_dir, bank + '.properties'))
             self.config_bank.read(config_files)
         except Exception as e:
-            print("Configuration file error: " + str(e))
             logging.error("Configuration file error " + str(e))
-            sys.exit(1)
+            raise Exception("Configuration file error " + str(e))
 
         self.last_modified = int(os.stat(os.path.join(conf_dir, bank + '.properties')).st_mtime)
 
