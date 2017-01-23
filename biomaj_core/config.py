@@ -123,7 +123,6 @@ class BiomajConfig(object):
             BmajIndex.load(index=elastic_index,
                            hosts=elastic_hosts,
                            do_index=do_index)
-
     def __init__(self, bank, options=None):
         """
         Loads bank configuration
