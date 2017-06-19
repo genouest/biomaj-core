@@ -143,19 +143,19 @@ class BiomajConfig(object):
         conf_dir = BiomajConfig.global_config.get('GENERAL', 'conf.dir')
         if not os.path.exists(os.path.join(conf_dir, bank + '.properties')):
             logging.error('Bank configuration file does not exists')
-            raise Exception('Configuration file ' + bank
-                            + '.properties does not exists')
+            raise Exception('Configuration file ' + bank +
+                            '.properties does not exists')
         try:
             config_files = [BiomajConfig.config_file]
             self.user_config_file = None
             if self.allow_user_config and hasattr(options, 'user')\
                     and options.user\
                     and os.path.exists(os.path.expanduser('~' + options.user + '/.biomaj.cfg')):
-                self.user_config_file = os.path.expanduser('~/' + options.user
-                                                           + '.biomaj.cfg')
+                self.user_config_file = os.path.expanduser('~/' + options.user +
+                                                           '.biomaj.cfg')
                 self.user_config = configparser.ConfigParser()
-                self.user_config.read([os.path.expanduser('~/' + options.user
-                                                          + '.biomaj.cfg')])
+                self.user_config.read([os.path.expanduser('~/' + options.user +
+                                                          '.biomaj.cfg')])
 
             if self.user_config_file is not None:
                 config_files.append(self.user_config_file)
@@ -165,8 +165,8 @@ class BiomajConfig(object):
             logging.error("Configuration file error " + str(e))
             raise Exception("Configuration file error " + str(e))
 
-        self.last_modified = int(os.stat(os.path.join(conf_dir, bank
-                                                      + '.properties')).st_mtime)
+        self.last_modified = int(os.stat(os.path.join(conf_dir, bank +
+                                                      '.properties')).st_mtime)
 
         do_log = False
         if options is None:
@@ -442,13 +442,13 @@ class BiomajConfig(object):
                                 status = False
                             else:
                                 if not self.get(proc + '.exe'):
-                                    logging.error('Process exe for ' + proc
-                                                  + ' not defined')
+                                    logging.error('Process exe for ' + proc +
+                                                  ' not defined')
                                     status = False
                                 if not self.get(proc + '.args'):
                                     logging.error(
-                                        'Process args for ' + proc
-                                        + ' not defined')
+                                        'Process args for ' + proc +
+                                        ' not defined')
                                     status = False
         # Check blocks
         if self.get('BLOCKS'):
@@ -467,16 +467,16 @@ class BiomajConfig(object):
                             procs = self.get(meta).split(',')
                             for proc in procs:
                                 if not self.get(proc + '.name'):
-                                    logging.error('Process ' + proc
-                                                  + ' not defined')
+                                    logging.error('Process ' + proc +
+                                                  ' not defined')
                                     status = False
                                 else:
                                     if not self.get(proc + '.exe'):
-                                        logging.error('Process exe for ' + proc
-                                                      + ' not defined')
+                                        logging.error('Process exe for ' +
+                                                      proc + ' not defined')
                                         status = False
                                     if not self.get(proc + '.args'):
-                                        logging.error('Process args for ' + proc
-                                                      + ' not defined')
+                                        logging.error('Process args for ' +
+                                                      proc + ' not defined')
                                         status = False
         return status
