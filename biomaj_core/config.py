@@ -108,7 +108,9 @@ class BiomajConfig(object):
             do_index = True
         if do_index:
             if BiomajConfig.global_config.get('GENERAL', 'elastic_nodes'):
-                elastic_hosts = BiomajConfig.global_config.get('GENERAL', 'elastic_nodes').split(',')
+                elastic_hosts = BiomajConfig.global_config.get('GENERAL',
+                                                               'elastic_nodes')\
+                    .split(',')
             else:
                 elastic_hosts = ['localhost']
             elastic_index = BiomajConfig.global_config.get('GENERAL', 'elastic_index')
@@ -141,14 +143,19 @@ class BiomajConfig(object):
         conf_dir = BiomajConfig.global_config.get('GENERAL', 'conf.dir')
         if not os.path.exists(os.path.join(conf_dir, bank + '.properties')):
             logging.error('Bank configuration file does not exists')
-            raise Exception('Configuration file ' + bank + '.properties does not exists')
+            raise Exception('Configuration file ' + bank
+                            + '.properties does not exists')
         try:
             config_files = [BiomajConfig.config_file]
             self.user_config_file = None
-            if self.allow_user_config and hasattr(options, 'user') and options.user and os.path.exists(os.path.expanduser('~' + options.user + '/.biomaj.cfg')):
-                self.user_config_file = os.path.expanduser('~/' + options.user + '.biomaj.cfg')
+            if self.allow_user_config and hasattr(options, 'user')\
+                    and options.user\
+                    and os.path.exists(os.path.expanduser('~' + options.user + '/.biomaj.cfg')):
+                self.user_config_file = os.path.expanduser('~/' + options.user
+                                                           + '.biomaj.cfg')
                 self.user_config = configparser.ConfigParser()
-                self.user_config.read([os.path.expanduser('~/' + options.user + '.biomaj.cfg')])
+                self.user_config.read([os.path.expanduser('~/' + options.user
+                                                          + '.biomaj.cfg')])
 
             if self.user_config_file is not None:
                 config_files.append(self.user_config_file)
@@ -158,7 +165,8 @@ class BiomajConfig(object):
             logging.error("Configuration file error " + str(e))
             raise Exception("Configuration file error " + str(e))
 
-        self.last_modified = int(os.stat(os.path.join(conf_dir, bank + '.properties')).st_mtime)
+        self.last_modified = int(os.stat(os.path.join(conf_dir, bank
+                                                      + '.properties')).st_mtime)
 
         do_log = False
         if options is None:
@@ -304,7 +312,9 @@ class BiomajConfig(object):
             if prop == 'remote.dir' and not val.endswith('/'):
                 val = val + '/'
             # If regexp, escape backslashes
-            if escape and (prop == 'local.files' or prop == 'remote.files' or prop == 'http.parse.dir.line' or prop == 'http.parse.file.line'):
+            if escape and (prop == 'local.files' or prop == 'remote.files' or
+                                   prop == 'http.parse.dir.line' or
+                                   prop == 'http.parse.file.line'):
                 val = val.replace('\\\\', '\\')
             return val
 
@@ -357,7 +367,8 @@ class BiomajConfig(object):
         if not self.get('db.formats'):
             logging.warn('db.formats is not set')
         if self.get('use_ldap'):
-            if not self.get('ldap.host') or not self.get('ldap.port') or not self.get('ldap.dn'):
+            if not self.get('ldap.host') or not self.get('ldap.port') or \
+                    not self.get('ldap.dn'):
                 logging.error('use_ldap set to 1 but missing configuration')
                 status = False
         if self.get('use_elastic'):
@@ -391,7 +402,8 @@ class BiomajConfig(object):
             status = False
         else:
             protocol = self.get('protocol')
-            allowed_protocols = ['none', 'multi', 'local', 'ftp', 'sftp', 'http', 'https', 'directftp', 'directhttp', 'directhttps', 'rsync']
+            allowed_protocols = ['none', 'multi', 'local', 'ftp', 'sftp', 'http',
+                                 'https', 'directftp', 'directhttp', 'directhttps', 'rsync']
             if protocol not in allowed_protocols:
                 logging.error('Protocol not supported: ' + protocol)
                 status = False
@@ -405,7 +417,9 @@ class BiomajConfig(object):
                 elif not self.get('remote.dir').endswith('/'):
                     logging.error('remote.dir must end with a /')
                     return False
-                if protocol not in ['direcftp', 'directhttp', 'directhttps'] and not self.get('remote.files') and not self.get('remote.list'):
+                if protocol not in ['direcftp', 'directhttp', 'directhttps'] and\
+                        not self.get('remote.files') and\
+                        not self.get('remote.list'):
                     logging.error('remote.files not set')
                     status = False
         if not self.get('local.files'):
@@ -428,7 +442,13 @@ class BiomajConfig(object):
                                 status = False
                             else:
                                 if not self.get(proc + '.exe'):
-                                    logging.error('Process exe for ' + proc + ' not defined')
+                                    logging.error('Process exe for ' + proc
+                                                  + ' not defined')
+                                    status = False
+                                if not self.get(proc + '.args'):
+                                    logging.error(
+                                        'Process args for ' + proc
+                                        + ' not defined')
                                     status = False
         # Check blocks
         if self.get('BLOCKS'):
@@ -447,10 +467,16 @@ class BiomajConfig(object):
                             procs = self.get(meta).split(',')
                             for proc in procs:
                                 if not self.get(proc + '.name'):
-                                    logging.error('Process ' + proc + ' not defined')
+                                    logging.error('Process ' + proc
+                                                  + ' not defined')
                                     status = False
                                 else:
                                     if not self.get(proc + '.exe'):
-                                        logging.error('Process exe for ' + proc + ' not defined')
+                                        logging.error('Process exe for ' + proc
+                                                      + ' not defined')
+                                        status = False
+                                    if not self.get(proc + '.args'):
+                                        logging.error('Process args for ' + proc
+                                                      + ' not defined')
                                         status = False
         return status
