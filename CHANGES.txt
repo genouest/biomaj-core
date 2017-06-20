@@ -1,3 +1,5 @@
+3.0.9:
+  #1 Add checks on bank properties
 3.0.8:
   Add DOCKER_URL, MONGO_URL, MONGO_DB env variable in override
   Do not fail on elasticsearch index creation, just log
