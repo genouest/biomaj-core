@@ -148,7 +148,7 @@ class TestBiomajUtils(unittest.TestCase):
     def test_service_config_override(self):
         config = {
             'rabbitmq': { 'host': '1.2.3.4'},
-            'web': {'endpoint': 'http://localhost'}
+            'web': {'local_endpoint': 'http://localhost'}
         }
         Utils.service_config_override(config)
         self.assertTrue(config['rabbitmq']['host'] == '1.2.3.4')
@@ -158,6 +158,10 @@ class TestBiomajUtils(unittest.TestCase):
         os.environ['WEB_LOCAL_ENDPOINT_DOWNLOAD'] = 'http://download'
         Utils.service_config_override(config)
         self.assertTrue(config['web']['local_endpoint_download'] == 'http://download')
+        endpoint = Utils.get_service_endpoint(config, 'download')
+        self.assertTrue(endpoint == 'http://download')
+        endpoint = Utils.get_service_endpoint(config, 'process')
+        self.assertTrue(endpoint == 'http://localhost')
 
     def test_mimes(self):
         fasta_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),

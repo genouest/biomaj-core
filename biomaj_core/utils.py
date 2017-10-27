@@ -21,6 +21,18 @@ class Utils(object):
     mime = None
 
     @staticmethod
+    def get_service_endpoint(config, service):
+        '''
+        Get endpoint from config for a service. If not defined, return global endpoint
+        '''
+        if service.upper() not in Utils.services:
+            return config['web']['local_endpoint']
+        if 'local_endpoint_' + service.lower() in config['web']:
+            return config['web']['local_endpoint_' + service.lower()]
+        else:
+            return config['web']['local_endpoint']
+
+    @staticmethod
     def service_config_override(config):
         if 'RABBITMQ_HOST' in os.environ and os.environ['RABBITMQ_HOST']:
             config['rabbitmq']['host'] = os.environ['RABBITMQ_HOST']
