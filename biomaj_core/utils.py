@@ -16,6 +16,8 @@ class Utils(object):
     Utility classes
     """
 
+    services = ['USER', 'DOWNLOAD', 'PROCESS', 'RELEASE', 'CRON', 'DAEMON', 'FTP', 'WATCHER']
+
     mime = None
 
     @staticmethod
@@ -69,6 +71,9 @@ class Utils(object):
             config['web']['port'] = int(os.environ['WEB_PORT'])
         if 'WEB_LOCAL_ENDPOINT' in os.environ and os.environ['WEB_LOCAL_ENDPOINT']:
             config['web']['local_endpoint'] = os.environ['WEB_LOCAL_ENDPOINT']
+        for service in Utils.services:
+            if 'WEB_LOCAL_ENDPOINT_' + service in os.environ and os.environ['WEB_LOCAL_ENDPOINT_' + service]:
+                config['web']['local_endpoint_' + service.lower()] = os.environ['WEB_LOCAL_ENDPOINT_' + service]
         if 'mongo' not in config:
             config['mongo'] = {'url': None, 'db': 'biomaj'}
         if 'MONGO_URL' in os.environ and os.environ['MONGO_URL']:
