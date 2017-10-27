@@ -26,10 +26,14 @@ class Utils(object):
         Get endpoint from config for a service. If not defined, return global endpoint
         '''
         if service.upper() not in Utils.services:
+            if 'web' not in config or 'local_endpoint' not in config['web']:
+                return None
             return config['web']['local_endpoint']
         if 'local_endpoint_' + service.lower() in config['web']:
             return config['web']['local_endpoint_' + service.lower()]
         else:
+            if 'web' not in config or 'local_endpoint' not in config['web']:
+                return None
             return config['web']['local_endpoint']
 
     @staticmethod
