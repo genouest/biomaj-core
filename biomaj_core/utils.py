@@ -7,8 +7,9 @@ import time
 import subprocess
 from subprocess import CalledProcessError
 import socket
-
+import pkg_resources
 from mimetypes import MimeTypes
+import requests
 
 
 class Utils(object):
@@ -19,6 +20,22 @@ class Utils(object):
     services = ['USER', 'DOWNLOAD', 'PROCESS', 'RELEASE', 'CRON', 'DAEMON', 'FTP', 'WATCHER']
 
     mime = None
+
+    @staticmethod
+    def get_module_version(module_name):
+        '''
+        Get module_name version and latest version on pypi
+        '''
+        try:
+            latest = None
+            req = requests.get('https://pypi.python.org/pypi/' + module_name + '/json')
+            if req.status_code == 200:
+                req_json = req.json()
+                latest = str(req_json['info']['version'])
+            return (pkg_resources.get_distribution(module_name).version, latest)
+        except Exception as e:
+            logging.exception(e)
+            return (None, latest)
 
     @staticmethod
     def get_service_endpoint(config, service):

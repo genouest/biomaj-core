@@ -1,3 +1,5 @@
+3.0.11:
+  Add get_module_version static method, checks module version and latest version on pypi
 3.0.10:
   Add env variables WEB_LOCAL_ENDPOINT_XX with XX as a service (defined in utils.py Utils.services) to define an endpoint per service
 3.0.9:

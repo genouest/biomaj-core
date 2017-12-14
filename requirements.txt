@@ -2,4 +2,4 @@ nose
 mock
 future
 elasticsearch
-
+requests

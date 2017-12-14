@@ -21,7 +21,7 @@ config = {
     'url': 'http://biomaj.genouest.org',
     'download_url': 'http://biomaj.genouest.org',
     'author_email': 'olivier.sallou@irisa.fr',
-    'version': '3.0.10',
+    'version': '3.0.11',
      'classifiers': [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
@@ -41,7 +41,8 @@ config = {
     ],
     'install_requires': [
                          'future',
-                         'elasticsearch'
+                         'elasticsearch',
+                         'requests'
                         ],
     'tests_require': ['nose', 'mock'],
     'test_suite': 'nose.collector',
