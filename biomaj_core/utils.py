@@ -34,7 +34,7 @@ class Utils(object):
                 latest = str(req_json['info']['version'])
             return (pkg_resources.get_distribution(module_name).version, latest)
         except Exception as e:
-            logging.exception(e)
+            logging.debug(str(e))
             return (None, latest)
 
     @staticmethod
