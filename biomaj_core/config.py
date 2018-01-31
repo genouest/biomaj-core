@@ -403,7 +403,7 @@ class BiomajConfig(object):
         else:
             protocol = self.get('protocol')
             allowed_protocols = ['none', 'multi', 'local', 'ftp', 'sftp', 'http',
-                                 'https', 'directftp', 'directhttp', 'directhttps', 'rsync']
+                                 'https', 'directftp', 'directhttp', 'directhttps', 'rsync', 'irods']
             if protocol not in allowed_protocols:
                 logging.error('Protocol not supported: ' + protocol)
                 status = False
@@ -421,6 +421,19 @@ class BiomajConfig(object):
                         not self.get('remote.files') and\
                         not self.get('remote.list'):
                     logging.error('remote.files not set')
+                    status = False
+            if 'irods' in protocol:
+                if not self.get('irods.user'):
+                    logging.error('irods user is not set')
+                    status = False
+                if not self.get('irods.password'):
+                    logging.error('irods password is not set')
+                    status = False
+                if not self.get('irods.port'):
+                    logging.error('irods port is not set')
+                    status = False
+                if not self.get('irods.protocol'):
+                    logging.error('irods protocol is not set')
                     status = False
         if not self.get('local.files'):
             logging.error('local.files is not set')
