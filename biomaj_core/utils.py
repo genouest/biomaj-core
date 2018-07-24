@@ -311,6 +311,33 @@ class Utils(object):
         return files_to_copy
 
     @staticmethod
+    def archive_check(archivefile):
+        """
+        Test file archive integrity
+
+        :param file: full path to file to check and uncompress
+        :type file: str
+        :return: True if ok, False if an error occured
+        """
+        logger = logging.getLogger('biomaj')
+        try:
+            if archivefile.endswith('.tar.gz'):
+                subprocess.check_call("tar tfz " + archivefile, shell=True)
+            elif archivefile.endswith('.tar'):
+                subprocess.check_call("tar tf " + archivefile, shell=True)
+            elif archivefile.endswith('.bz2'):
+                subprocess.check_call("tar tjf " + archivefile, shell=True)
+            elif archivefile.endswith('.gz'):
+                subprocess.check_call("gunzip -t " + archivefile, shell=True)
+            elif archivefile.endswith('.zip'):
+                subprocess.check_call("unzip -t " + archivefile, shell=True)
+        except CalledProcessError as uncompresserror:
+            logger.error("Archive integrity error of %s: %s" % (archivefile, str(uncompresserror)))
+            return False
+
+        return True
+
+    @staticmethod
     def uncompress(archivefile, remove=True):
         """
         Test if file is an archive, and uncompress it
