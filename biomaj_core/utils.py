@@ -46,8 +46,9 @@ class Utils(object):
             if 'web' not in config or 'local_endpoint' not in config['web']:
                 return None
             return config['web']['local_endpoint']
-        if 'local_endpoint_' + service.lower() in config['web']:
-            return config['web']['local_endpoint_' + service.lower()]
+        service_endpoint_name = 'local_endpoint_' + service.lower()
+        if service_endpoint_name in config['web'] and config['web'][service_endpoint_name]:
+            return config['web'][service_endpoint_name]
         else:
             if 'web' not in config or 'local_endpoint' not in config['web']:
                 return None
@@ -55,6 +56,8 @@ class Utils(object):
 
     @staticmethod
     def service_config_override(config):
+        if 'rabbitmq' not in config:
+            config['rabbitmq'] = {}
         if 'RABBITMQ_HOST' in os.environ and os.environ['RABBITMQ_HOST']:
             config['rabbitmq']['host'] = os.environ['RABBITMQ_HOST']
         if 'RABBITMQ_PORT' in os.environ and os.environ['RABBITMQ_PORT']:

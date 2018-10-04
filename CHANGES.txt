@@ -1,3 +1,6 @@
+3.0.14:
+  Fix checks on local_endpoint_XXX in config.yml
+  In rabbitmq not defined on config.yml add an empty dict
 3.0.13:
   Add archive integrity checks
 3.0.12:
