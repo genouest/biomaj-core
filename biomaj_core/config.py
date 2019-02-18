@@ -488,7 +488,7 @@ class BiomajConfig(object):
                                         logging.error('Process exe for ' +
                                                       proc + ' not defined')
                                         status = False
-                                    if not self.get(proc + '.args'):
+                                    if self.get(proc + '.args') is None:
                                         logging.error('Process args for ' +
                                                       proc + ' not defined')
                                         status = False
