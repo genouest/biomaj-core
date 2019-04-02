@@ -192,9 +192,11 @@ class BiomajConfig(object):
             if options is not None and options.get_option('log') is not None:
                 hdlr.setLevel(BiomajConfig.LOGLEVEL[options.get_option('log')])
                 self.log_level = BiomajConfig.LOGLEVEL[options.get_option('log')]
+                logger.setLevel(self.log_level)
             else:
                 hdlr.setLevel(BiomajConfig.LOGLEVEL[self.get('historic.logfile.level')])
                 self.log_level = BiomajConfig.LOGLEVEL[self.get('historic.logfile.level')]
+                logger.setLevel(self.log_level)
             formatter = logging.Formatter('%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s')
             hdlr.setFormatter(formatter)
             logger.addHandler(hdlr)

@@ -330,6 +330,9 @@ class Utils(object):
             else:
                 if not os.path.exists(os.path.dirname(to_file)):
                     os.makedirs(os.path.dirname(to_file))
+            if not os.path.exists(from_file):
+                logger.warn('File does not exists: %s' % (from_file))
+                continue
             if move:
                 shutil.move(from_file, to_file)
             else:
