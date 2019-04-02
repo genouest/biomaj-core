@@ -41,7 +41,8 @@ class BiomajConfig(object):
         'db.formats': '',
         'keep.old.version': 1,
         'docker.sudo': '1',
-        'auto_publish': 0
+        'auto_publish': 0,
+        'use_hardlinks': 0
     }
 
     # Old biomaj level compatibility

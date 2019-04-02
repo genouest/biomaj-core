@@ -1,4 +1,5 @@
 import os
+import errno
 import re
 import logging
 import shutil
@@ -195,7 +196,8 @@ class Utils(object):
             }[date]
 
     @staticmethod
-    def copy_files(files_to_copy, to_dir, move=False, lock=None):
+    def copy_files(files_to_copy, to_dir, move=False, lock=None,
+                   use_hardlinks=False):
         """
         Copy or move files to to_dir, keeping directory structure.
 
@@ -214,6 +216,8 @@ class Utils(object):
         :type move: bool
         :param lock: thread lock object for multi-threads
         :type lock: Lock
+        :param use_hardlinks: use hard links (if possible)
+        :type link: bool
         """
         logger = logging.getLogger('biomaj')
         nb_files = len(files_to_copy)
@@ -244,14 +248,39 @@ class Utils(object):
             else:
                 start_time = datetime.datetime.now()
                 start_time = time.mktime(start_time.timetuple())
-                shutil.copyfile(from_file, to_file)
+                if use_hardlinks:
+                    try:
+                        os.link(from_file, to_file)
+                        logger.debug("Using hardlinks to copy %s",
+                                     file_to_copy['name'])
+                    except OSError as e:
+                        if e.errno == errno.EPERM:
+                            msg = "The FS at %s doesn't support hard links. Using regular copy."
+                            logger.warn(msg, to_dir)
+                            # Copy this file
+                            shutil.copyfile(from_file, to_file)
+                            # Don't try links anymore
+                            use_hardlinks = False
+                        if e.errno == errno.EXDEV:
+                            msg = "Cross device hard link are impossible (source: %s, dest: %s). Using regular copy."
+                            logger.warn(msg, from_file, to_dir)
+                            # Copy this file
+                            shutil.copyfile(from_file, to_file)
+                            # Don't try links anymore
+                            use_hardlinks = False
+                        else:
+                            raise
+                else:
+                    shutil.copyfile(from_file, to_file)
                 end_time = datetime.datetime.now()
                 end_time = time.mktime(end_time.timetuple())
                 file_to_copy['download_time'] = end_time - start_time
-                shutil.copystat(from_file, to_file)
+                if not use_hardlinks:
+                    shutil.copystat(from_file, to_file)
 
     @staticmethod
-    def copy_files_with_regexp(from_dir, to_dir, regexps, move=False, lock=None):
+    def copy_files_with_regexp(from_dir, to_dir, regexps, move=False, lock=None,
+                               use_hardlinks=False):
         """
         Copy or move files from from_dir to to_dir matching regexps.
         Copy keeps the original file stats.
@@ -266,6 +295,8 @@ class Utils(object):
         :type move: bool
         :param lock: thread lock object for multi-threads
         :type lock: Lock
+        :param use_hardlinks: use hard links (if possible)
+        :type link: bool
         :return: list of copied files with their size
         """
         logger = logging.getLogger('biomaj')
@@ -302,8 +333,31 @@ class Utils(object):
             if move:
                 shutil.move(from_file, to_file)
             else:
-                shutil.copyfile(from_file, to_file)
-                shutil.copystat(from_file, to_file)
+                if use_hardlinks:
+                    try:
+                        os.link(from_file, to_file)
+                        logger.debug("Using hardlinks to copy %s",
+                                     file_to_copy['name'])
+                    except OSError as e:
+                        if e.errno == errno.EPERM:
+                            msg = "The FS at %s doesn't support hard links. Using regular copy."
+                            logger.warn(msg, to_dir)
+                            # Copy this file
+                            shutil.copyfile(from_file, to_file)
+                            # Don't try links anymore
+                            use_hardlinks = False
+                        if e.errno == errno.EXDEV:
+                            msg = "Cross device hard link are impossible (source: %s, dest: %s). Using regular copy."
+                            logger.warn(msg, from_file, to_dir)
+                            # Copy this file
+                            shutil.copyfile(from_file, to_file)
+                            # Don't try links anymore
+                            use_hardlinks = False
+                        else:
+                            raise
+                else:
+                    shutil.copyfile(from_file, to_file)
+                    shutil.copystat(from_file, to_file)
             file_to_copy['size'] = os.path.getsize(to_file)
             f_stat = datetime.datetime.fromtimestamp(os.path.getmtime(to_file))
             file_to_copy['year'] = str(f_stat.year)
