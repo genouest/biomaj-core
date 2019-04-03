@@ -1,8 +1,11 @@
+from __future__ import print_function
+
 from nose.tools import *
 from nose.plugins.attrib import attr
 
 import shutil
 import os
+import sys
 import tempfile
 import stat
 
@@ -24,6 +27,7 @@ class UtilsForTest:
         Setup the temp dirs and files.
         """
         self.global_properties = None
+        self.global_properties_hl = None
         self.bank_properties = None
 
         self.test_dir = tempfile.mkdtemp('biomaj')
@@ -49,6 +53,9 @@ class UtilsForTest:
 
         if self.global_properties is None:
             self.__copy_global_properties()
+
+        if self.global_properties_hl is None:
+            self.__copy_global_properties_hl()
 
         if self.bank_properties is None:
             self.__copy_test_bank_properties()
@@ -86,7 +93,8 @@ class UtilsForTest:
                       'error.properties', 'local.properties',
                       'localprocess.properties', 'testhttp.properties',
                       'computed.properties', 'computed2.properties',
-                      'sub1.properties', 'sub2.properties']
+                      'sub1.properties', 'sub2.properties',
+                      'hardlinks.properties']
         for prop in properties:
             from_file = os.path.join(curdir, prop)
             to_file = os.path.join(self.conf_dir, prop)
@@ -110,6 +118,29 @@ class UtilsForTest:
         curdir = os.path.dirname(os.path.realpath(__file__))
         global_template = os.path.join(curdir, 'global.properties')
         fout = open(self.global_properties, 'w')
+        with open(global_template,'r') as fin:
+            for line in fin:
+                if line.startswith('conf.dir'):
+                    fout.write("conf.dir="+self.conf_dir+"\n")
+                elif line.startswith('log.dir'):
+                    fout.write("log.dir="+self.log_dir+"\n")
+                elif line.startswith('data.dir'):
+                    fout.write("data.dir="+self.data_dir+"\n")
+                elif line.startswith('process.dir'):
+                    fout.write("process.dir="+self.process_dir+"\n")
+                elif line.startswith('lock.dir'):
+                    fout.write("lock.dir="+self.lock_dir+"\n")
+                else:
+                    fout.write(line)
+        fout.close()
+
+    def __copy_global_properties_hl(self):
+        if self.global_properties_hl is not None:
+            return
+        self.global_properties_hl = os.path.join(self.conf_dir, 'global_hardlinks.properties')
+        curdir = os.path.dirname(os.path.realpath(__file__))
+        global_template = os.path.join(curdir, 'global_hardlinks.properties')
+        fout = open(self.global_properties_hl, 'w')
         with open(global_template,'r') as fin:
             for line in fin:
                 if line.startswith('conf.dir'):
@@ -163,6 +194,24 @@ class TestBiomajUtils(unittest.TestCase):
         endpoint = Utils.get_service_endpoint(config, 'process')
         self.assertTrue(endpoint == 'http://localhost')
 
+    def test_use_hardlinks_config(self):
+        """
+        Test that hardlinks are disabled by default and can be overridden.
+        """
+        BiomajConfig.load_config(self.utils.global_properties,
+                                 allow_user_config=False)
+        # Must be disabled in local.properties
+        config = BiomajConfig('local')
+        self.assertFalse(config.get_bool("use_hardlinks"))
+        # Must be enabled for hardlinks.properties (override)
+        config = BiomajConfig('hardlinks')
+        self.assertTrue(config.get_bool("use_hardlinks"))
+        # Reload file with use_hardlinks=1
+        BiomajConfig.load_config(self.utils.global_properties_hl,
+                                 allow_user_config=False)
+        config = BiomajConfig('local')
+        self.assertTrue(config.get_bool("use_hardlinks"))
+
     def test_mimes(self):
         fasta_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                   'bank/test2.fasta')
@@ -186,6 +235,39 @@ class TestBiomajUtils(unittest.TestCase):
         Utils.copy_files_with_regexp(from_dir, to_dir, ['.*\.py'])
         self.assertTrue(os.path.exists(to_dir+'/biomaj_tests.py'))
 
+    def test_copy_with_regexp_hardlink(self):
+        """
+        Test copy with hardlinks: we create files in data_dir and try to
+        link them. This should work unless /tmp don't accept hardlinks.
+        """
+        # Create 5 files and a directory in data_dir. We don't destroy them
+        # since they are in /tmp.
+        suffix = ".dat"
+        regexp = ".*\\" + suffix
+        orig_file_full = [
+            tempfile.mkstemp(dir=self.utils.data_dir, suffix=suffix)[1]
+            for i in range(5)
+        ]
+        to_dir = tempfile.mkdtemp(dir=self.utils.data_dir)
+        new_file_full = [os.path.join(to_dir, os.path.basename(f))
+                         for f in orig_file_full]
+        # Copy
+        from_dir = self.utils.data_dir
+        Utils.copy_files_with_regexp(from_dir, to_dir, [regexp],
+                                     use_hardlinks=True)
+        # Check if files was copied
+        for orig, new in zip(orig_file_full, new_file_full):
+            self.assertTrue(os.path.exists(new))
+            # Check if it's really a hardlink. This may fail so we catch
+            # any exceptions.
+            orig_file_stat = os.stat(orig)
+            new_file_stat = os.stat(new)
+            try:
+                self.assertTrue(orig_file_stat.st_ino == new_file_stat.st_ino)
+            except Exception:
+                msg = "In %s: copy worked but hardlinks were not used." % self.id()
+                print(msg, file=sys.stderr)
+
     def test_copy(self):
         from_dir = os.path.dirname(os.path.realpath(__file__))
         local_file = 'biomaj_tests.py'
@@ -193,6 +275,33 @@ class TestBiomajUtils(unittest.TestCase):
         to_dir = self.utils.data_dir
         Utils.copy_files(files_to_copy, to_dir)
         self.assertTrue(os.path.exists(to_dir+'/biomaj_tests.py'))
+
+    def test_copy_hardlink(self):
+        """
+        Test copy with hardlinks: we create a file in data_dir and try to
+        link it. This should work unless /tmp don't accept hardlinks.
+        """
+        # Create a file and a directory in data_dir. We don't destroy them
+        # since they are in /tmp.
+        _, orig_file_full = tempfile.mkstemp(dir=self.utils.data_dir)
+        orig_file = os.path.basename(orig_file_full)
+        to_dir = tempfile.mkdtemp(dir=self.utils.data_dir)
+        new_file_full = os.path.join(to_dir, orig_file)
+        # Copy
+        from_dir = self.utils.data_dir
+        files_to_copy = [{'root': from_dir, 'name': orig_file}]
+        Utils.copy_files(files_to_copy, to_dir, use_hardlinks=True)
+        # Check if file was copied
+        self.assertTrue(os.path.exists(new_file_full))
+        # Check if it's really a hardlink. This may fail so we catch
+        # any exceptions.
+        orig_file_stat = os.stat(orig_file_full)
+        new_file_stat = os.stat(new_file_full)
+        try:
+            self.assertTrue(orig_file_stat.st_ino == new_file_stat.st_ino)
+        except Exception:
+            msg = "In %s: copy worked but hardlinks were not used." % self.id()
+            print(msg, file=sys.stderr)
 
     @attr('check')
     def test_check_method(self):
