@@ -271,7 +271,7 @@ class Utils(object):
                             # Don't try links anymore
                             use_hardlinks = False
                         elif e.errno == errno.EXDEV:
-                            msg = "Cross device hard link are impossible (source: %s, dest: %s). Using regular copy."
+                            msg = "Cross device hard link is impossible (source: %s, dest: %s). Using regular copy."
                             logger.warn(msg, from_file, to_dir)
                             # Copy this file
                             shutil.copyfile(from_file, to_file)
@@ -369,7 +369,7 @@ class Utils(object):
                             # Don't try links anymore
                             use_hardlinks = False
                         elif e.errno == errno.EXDEV:
-                            msg = "Cross device hard link are impossible (source: %s, dest: %s). Using regular copy."
+                            msg = "Cross device hard link is impossible (source: %s, dest: %s). Using regular copy."
                             logger.warn(msg, from_file, to_dir)
                             # Copy this file (we copy the stats here because
                             # it's not done at the end of the function)
