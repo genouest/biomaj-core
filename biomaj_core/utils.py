@@ -254,7 +254,15 @@ class Utils(object):
                         logger.debug("Using hardlinks to copy %s",
                                      file_to_copy['name'])
                     except OSError as e:
-                        if e.errno == errno.EPERM:
+                        if e.errno in (errno.ENOSYS, errno.ENOTSUP):
+                            msg = "Your system doesn't support hard links. Using regular copy."
+                            logger.warn(msg)
+                            # Copy this file (the stats are copied at the end
+                            # of the function)
+                            shutil.copyfile(from_file, to_file)
+                            # Don't try links anymore
+                            use_hardlinks = False
+                        elif e.errno == errno.EPERM:
                             msg = "The FS at %s doesn't support hard links. Using regular copy."
                             logger.warn(msg, to_dir)
                             # Copy this file (the stats are copied at the end
@@ -262,8 +270,8 @@ class Utils(object):
                             shutil.copyfile(from_file, to_file)
                             # Don't try links anymore
                             use_hardlinks = False
-                        if e.errno == errno.EXDEV:
-                            msg = "Cross device hard link are impossible (source: %s, dest: %s). Using regular copy."
+                        elif e.errno == errno.EXDEV:
+                            msg = "Cross device hard link is impossible (source: %s, dest: %s). Using regular copy."
                             logger.warn(msg, from_file, to_dir)
                             # Copy this file
                             shutil.copyfile(from_file, to_file)
@@ -343,7 +351,15 @@ class Utils(object):
                         logger.debug("Using hardlinks to copy %s",
                                      file_to_copy['name'])
                     except OSError as e:
-                        if e.errno == errno.EPERM:
+                        if e.errno in (errno.ENOSYS, errno.ENOTSUP):
+                            msg = "Your system doesn't support hard links. Using regular copy."
+                            logger.warn(msg)
+                            # Copy this file (the stats are copied at the end
+                            # of the function)
+                            shutil.copyfile(from_file, to_file)
+                            # Don't try links anymore
+                            use_hardlinks = False
+                        elif e.errno == errno.EPERM:
                             msg = "The FS at %s doesn't support hard links. Using regular copy."
                             logger.warn(msg, to_dir)
                             # Copy this file (we copy the stats here because
@@ -352,8 +368,8 @@ class Utils(object):
                             shutil.copystat(from_file, to_file)
                             # Don't try links anymore
                             use_hardlinks = False
-                        if e.errno == errno.EXDEV:
-                            msg = "Cross device hard link are impossible (source: %s, dest: %s). Using regular copy."
+                        elif e.errno == errno.EXDEV:
+                            msg = "Cross device hard link is impossible (source: %s, dest: %s). Using regular copy."
                             logger.warn(msg, from_file, to_dir)
                             # Copy this file (we copy the stats here because
                             # it's not done at the end of the function)
