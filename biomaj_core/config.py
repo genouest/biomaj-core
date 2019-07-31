@@ -405,8 +405,8 @@ class BiomajConfig(object):
             status = False
         else:
             protocol = self.get('protocol')
-            allowed_protocols = ['none', 'multi', 'local', 'ftp', 'sftp', 'http',
-                                 'https', 'directftp', 'directhttp', 'directhttps', 'rsync', 'irods']
+            allowed_protocols = ['none', 'multi', 'local', 'ftp', 'ftps', 'http', 'https',
+                                 'directftp', 'directftps', 'directhttp', 'directhttps', 'rsync', 'irods']
             if protocol not in allowed_protocols:
                 logging.error('Protocol not supported: ' + protocol)
                 status = False
@@ -420,7 +420,7 @@ class BiomajConfig(object):
                 elif not self.get('remote.dir').endswith('/'):
                     logging.error('remote.dir must end with a /')
                     return False
-                if protocol not in ['direcftp', 'directhttp', 'directhttps'] and\
+                if protocol not in ['directftp', 'directftps', 'directhttp', 'directhttps'] and\
                         not self.get('remote.files') and\
                         not self.get('remote.list'):
                     logging.error('remote.files not set')
