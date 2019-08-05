@@ -1,5 +1,7 @@
 3.0.19:
   Add ftps and directftps protocols
+  #4 Harden hardlinks
+
 3.0.18:
   Allow to use hardlinks in copy_files and copy_files_with_regexp
 3.0.17:
