@@ -310,16 +310,22 @@ class Utils(object):
         """
         logger = logging.getLogger('biomaj')
         files_to_copy = []
+        files_list = []
         for root, dirs, files in os.walk(from_dir, topdown=True):
             for name in files:
                 for reg in regexps:
                     file_relative_path = os.path.join(root, name).replace(from_dir, '')
                     if file_relative_path.startswith('/'):
                         file_relative_path = file_relative_path.replace('/', '', 1)
+                    # sometimes files appear twice.... check not already managed
+                    if file_relative_path in files_list:
+                        continue
                     if reg == "**/*":
                         files_to_copy.append({'name': file_relative_path})
+                        files_list.append(file_relative_path)
                         continue
                     if re.match(reg, file_relative_path):
+                        files_list.append(file_relative_path)
                         files_to_copy.append({'name': file_relative_path})
                         continue
 
