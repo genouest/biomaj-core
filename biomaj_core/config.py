@@ -40,6 +40,7 @@ class BiomajConfig(object):
         'db.type': '',
         'db.formats': '',
         'keep.old.version': 1,
+        'keep.old.sessions': 0,
         'docker.sudo': '1',
         'auto_publish': 0,
         'use_hardlinks': 0
