@@ -8,6 +8,7 @@ import os
 import time
 import sys
 
+from biomaj_core.utils import Utils
 from biomaj_core.bmajindex import BmajIndex
 
 if sys.version < '3':
@@ -285,19 +286,9 @@ class BiomajConfig(object):
         """
         Get a boolean property from bank or general configration. Optionally in section.
         """
-        value = None
+        value = self.get(prop, section, escape, default)
 
-        if self._in_env(prop):
-            value = self._in_env(prop)
-        else:
-            value = self.get(prop, section, escape, default)
-
-        if value is None:
-            return False
-        if value is True or value == 'true' or value == '1':
-            return True
-        else:
-            return False
+        return Utils.to_bool(value)
 
     def get(self, prop, section='GENERAL', escape=True, default=None):
         """
