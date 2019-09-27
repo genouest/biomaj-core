@@ -153,17 +153,18 @@ class Utils(object):
 
         Each file is a dict like with (at least) parameters: year, month, day
         """
-        release = None
+        if not files:
+            return None
+        # release = None
+        rfile = files[0]
+        release = {'year': rfile['year'], 'month': rfile['month'], 'day': rfile['day']}
         for rfile in files:
-            if release is None:
-                release = {'year': rfile['year'], 'month': rfile['month'], 'day': rfile['day']}
-            else:
-                rel_date = datetime.date(int(release['year']), int(release['month']), int(release['day']))
-                file_date = datetime.date(int(rfile['year']), int(rfile['month']), int(rfile['day']))
-                if file_date > rel_date:
-                    release['year'] = rfile['year']
-                    release['month'] = rfile['month']
-                    release['day'] = rfile['day']
+            rel_date = datetime.date(int(release['year']), int(release['month']), int(release['day']))
+            file_date = datetime.date(int(rfile['year']), int(rfile['month']), int(rfile['day']))
+            if file_date > rel_date:
+                release['year'] = rfile['year']
+                release['month'] = rfile['month']
+                release['day'] = rfile['day']
         return release
 
     @staticmethod
@@ -311,7 +312,7 @@ class Utils(object):
         logger = logging.getLogger('biomaj')
         files_to_copy = []
         files_list = []
-        for root, dirs, files in os.walk(from_dir, topdown=True):
+        for root, _, files in os.walk(from_dir, topdown=True):
             for name in files:
                 for reg in regexps:
                     file_relative_path = os.path.join(root, name).replace(from_dir, '')
