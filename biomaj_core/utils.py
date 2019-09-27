@@ -455,7 +455,7 @@ class Utils(object):
                 return True
             else:
                 return False
-        except:
+        except Exception:
             return False
 
     @staticmethod
@@ -466,5 +466,5 @@ class Utils(object):
             return 0
         try:
             return int(value)
-        except:
+        except Exception:
             return 0
