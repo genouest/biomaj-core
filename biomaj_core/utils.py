@@ -466,3 +466,28 @@ class Utils(object):
             os.remove(archivefile)
 
         return True
+
+    @staticmethod
+    def to_bool(value):
+        if isinstance(value, bool):
+            return value
+        if not value:
+            return False
+        try:
+            if value.lower() == 'true' or value == '1':
+                return True
+            else:
+                return False
+        except Exception:
+            return False
+
+    @staticmethod
+    def to_int(value):
+        if isinstance(value, int):
+            return value
+        if not value:
+            return 0
+        try:
+            return int(value)
+        except Exception:
+            return 0
