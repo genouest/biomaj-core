@@ -44,7 +44,9 @@ class BiomajConfig(object):
         'keep.old.sessions': 0,
         'docker.sudo': '1',
         'auto_publish': 0,
-        'use_hardlinks': 0
+        'use_hardlinks': 0,
+        'wait_condition': 'wait_fixed(3)',
+        'stop_condition': 'stop_after_attempt(3)'
     }
 
     # Old biomaj level compatibility
