@@ -1,4 +1,8 @@
-3.0.20 [unreleased]:
+3.0.20:
+   PR #7 from institut-de-genomique/retry_method, rename default values of retryer.
+   Rename wait_condition to wait_policy in default values
+   PR #6 from institut-de-genomique/retry_method, add default values for retryer
+   Add default values for retryer (see the corresponding branch biomaj-download).
 3.0.19:
   Add ftps and directftps protocols
   #4 Harden hardlinks
