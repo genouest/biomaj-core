@@ -47,7 +47,7 @@ class BiomajConfig(object):
         'use_hardlinks': 0,
         'wait_policy': 'wait_fixed(3)',
         'stop_condition': 'stop_after_attempt(3)',
-        'ssh_hosts_file': '/tmp/known_hosts',
+        'ssh_hosts_file': os.path.expanduser('~/.ssh/known_hosts'),
         'ssh_new_host': 'reject',
     }
 
