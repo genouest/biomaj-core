@@ -1,3 +1,5 @@
+3.0.21:
+   Pin elasticsearch dependency, v7 breaks some API calls
 3.0.20:
    PR #7 from institut-de-genomique/retry_method, rename default values of retryer.
    Rename wait_condition to wait_policy in default values

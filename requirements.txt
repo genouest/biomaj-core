@@ -1,5 +1,5 @@
 nose
 mock
 future
-elasticsearch
+elasticsearch==5.5.3
 requests
