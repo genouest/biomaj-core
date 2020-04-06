@@ -1,4 +1,6 @@
-3.0.21:
+3.0.23:
+   PR #9 Add missing ssh defaults for download
+3.0.21 [3.0.22 ,tag issue]:
    Pin elasticsearch dependency, v7 breaks some API calls
 3.0.20:
    PR #7 from institut-de-genomique/retry_method, rename default values of retryer.
