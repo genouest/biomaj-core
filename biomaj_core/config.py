@@ -46,7 +46,9 @@ class BiomajConfig(object):
         'auto_publish': 0,
         'use_hardlinks': 0,
         'wait_policy': 'wait_fixed(3)',
-        'stop_condition': 'stop_after_attempt(3)'
+        'stop_condition': 'stop_after_attempt(3)',
+        'ssh_hosts_file': os.path.expanduser('~/.ssh/known_hosts'),
+        'ssh_new_host': 'reject',
     }
 
     # Old biomaj level compatibility
