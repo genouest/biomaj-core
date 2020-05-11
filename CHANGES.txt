@@ -1,3 +1,5 @@
+3.0.24:
+   get_more_recent_file, return also file info
 3.0.23:
    PR #9 Add missing ssh defaults for download
 3.0.21 [3.0.22 ,tag issue]:

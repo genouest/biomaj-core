@@ -157,7 +157,7 @@ class Utils(object):
             return None
         # release = None
         rfile = files[0]
-        release = {'year': rfile['year'], 'month': rfile['month'], 'day': rfile['day']}
+        release = {'year': rfile['year'], 'month': rfile['month'], 'day': rfile['day'], 'file': rfile}
         for rfile in files:
             rel_date = datetime.date(int(release['year']), int(release['month']), int(release['day']))
             file_date = datetime.date(int(rfile['year']), int(rfile['month']), int(rfile['day']))
@@ -165,6 +165,7 @@ class Utils(object):
                 release['year'] = rfile['year']
                 release['month'] = rfile['month']
                 release['day'] = rfile['day']
+                release['file'] = rfile
         return release
 
     @staticmethod
