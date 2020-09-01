@@ -136,7 +136,7 @@ class Utils(object):
                 try:
                     folder_size += os.path.getsize(filename)
                 except Exception:
-                    logging.error('[stat][size] file not found %s' % filename)
+                    logger.error('[stat][size] file not found %s' % filename)
         return folder_size
 
     @staticmethod
