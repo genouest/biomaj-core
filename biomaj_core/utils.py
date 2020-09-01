@@ -126,13 +126,17 @@ class Utils(object):
         :param folder: directory path
         :type folder: str
         """
+        logger = logging.getLogger('biomaj')
         if not os.path.exists(folder):
             return -1
         folder_size = 0
         for (path, dirs, files) in os.walk(folder):
             for ffile in files:
                 filename = os.path.join(path, ffile)
-                folder_size += os.path.getsize(filename)
+                try:
+                    folder_size += os.path.getsize(filename)
+                except Exception:
+                    logging.error('[stat][size] file not found %s' % filename)
         return folder_size
 
     @staticmethod

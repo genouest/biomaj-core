@@ -1,3 +1,5 @@
+3.0.25:
+   utils/get_folder_size: if file not found, catch error and continue
 3.0.24:
    get_more_recent_file, return also file info
 3.0.23:
