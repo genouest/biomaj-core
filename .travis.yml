@@ -1,5 +1,7 @@
 language: python
-arch: ppc64le
+arch: 
+  - ppc64le
+  - amd64
 sudo: false
 python:
   - '2.7'
