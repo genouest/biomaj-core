@@ -365,12 +365,12 @@ class BiomajConfig(object):
             logging.warn('db.fullname is not set')
         if not self.get('db.formats'):
             logging.warn('db.formats is not set')
-        if self.get('use_ldap'):
+        if self.get_bool('use_ldap'):
             if not self.get('ldap.host') or not self.get('ldap.port') or \
                     not self.get('ldap.dn'):
                 logging.error('use_ldap set to 1 but missing configuration')
                 status = False
-        if self.get('use_elastic'):
+        if self.get_bool('use_elastic'):
             if not self.get('elastic_nodes') or not self.get('elastic_index'):
                 logging.error('use_elastic set to 1 but missing configuration')
                 status = False
