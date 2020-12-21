@@ -416,7 +416,7 @@ class Utils(object):
         try:
             if archivefile.endswith('.tar.gz'):
                 subprocess.check_call("tar tfz " + archivefile, shell=True)
- 	    elif archivefile.endswith('.tgz'):
+            elif archivefile.endswith('.tgz'):
                 subprocess.check_call("tar xzf " + archivefile, shell=True)
             elif archivefile.endswith('.tar'):
                 subprocess.check_call("tar tf " + archivefile, shell=True)
@@ -467,7 +467,7 @@ class Utils(object):
             elif archivefile.endswith('.zip'):
                 subprocess.check_call("unzip -o " + archivefile + " -d " + os.path.dirname(archivefile), shell=True)
                 is_archive = True
-            else: 
+            else:
                 logger.warn('Uncompress: Unknown file extension')
         except CalledProcessError as uncompresserror:
             logger.error("Uncompress error of %s: %s" % (archivefile, str(uncompresserror)))
