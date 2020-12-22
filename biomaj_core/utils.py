@@ -425,7 +425,7 @@ class Utils(object):
             elif archivefile.endswith('.zip'):
                 subprocess.check_call("unzip -t " + archivefile, shell=True)
             else:
-                logger.warn("archive_check: unable to process check call for '"  + str(archivefile) + "'")
+                logger.warn("archive_check: unable to process check call for '" + str(archivefile) + "'")
         except CalledProcessError as uncompresserror:
             logger.error("Archive integrity error of %s: %s" % (archivefile, str(uncompresserror)))
             return False
