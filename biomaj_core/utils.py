@@ -414,10 +414,8 @@ class Utils(object):
         """
         logger = logging.getLogger('biomaj')
         try:
-            if archivefile.endswith('.tar.gz'):
+            if archivefile.endswith(('.tar.gz', '.tgz')):
                 subprocess.check_call("tar tfz " + archivefile, shell=True)
-            elif archivefile.endswith('.tgz'):
-                subprocess.check_call("tar xzf " + archivefile, shell=True)
             elif archivefile.endswith('.tar'):
                 subprocess.check_call("tar tf " + archivefile, shell=True)
             elif archivefile.endswith('.bz2'):
@@ -449,11 +447,8 @@ class Utils(object):
         is_archive = False
         logger = logging.getLogger('biomaj')
         try:
-            if archivefile.endswith('.tar.gz'):
+            if archivefile.endswith(('.tar.gz', '.tgz')):
                 subprocess.check_call("tar xfz " + archivefile + " --overwrite -C " + os.path.dirname(archivefile), shell=True)
-                is_archive = True
-            elif archivefile.endswith('.tgz'):
-                subprocess.check_call("tar xzf " + archivefile + " --overwrite -C " + os.path.dirname(archivefile), shell=True)
                 is_archive = True
             elif archivefile.endswith('.tar'):
                 subprocess.check_call("tar xf " + archivefile + " --overwrite -C " + os.path.dirname(archivefile), shell=True)
