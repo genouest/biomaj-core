@@ -425,7 +425,7 @@ class Utils(object):
             elif archivefile.endswith('.zip'):
                 subprocess.check_call("unzip -t " + archivefile, shell=True)
             else:
-                logger.warn('Uncompress: Unknown file extension')
+                raise Exception("archive_check: Unknown file extension in '" + str(archivefile) + "'")
         except CalledProcessError as uncompresserror:
             logger.error("Archive integrity error of %s: %s" % (archivefile, str(uncompresserror)))
             return False
@@ -463,12 +463,13 @@ class Utils(object):
                 subprocess.check_call("unzip -o " + archivefile + " -d " + os.path.dirname(archivefile), shell=True)
                 is_archive = True
             else:
-                logger.warn('Uncompress: Unknown file extension')
+                raise Exception("uncompress: Unknown file extension in '" + str(archivefile) + "'")
         except CalledProcessError as uncompresserror:
             logger.error("Uncompress error of %s: %s" % (archivefile, str(uncompresserror)))
             return False
         except Exception as e:
             logger.error(e)
+            return False
 
         if is_archive:
             logger.debug('Uncompress:uncompress:' + archivefile)
