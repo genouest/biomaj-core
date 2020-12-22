@@ -414,7 +414,7 @@ class Utils(object):
         """
         logger = logging.getLogger('biomaj')
         try:
-            if archivefile.endswith('.tar.gz'):
+            if archivefile.endswith(('.tar.gz', '.tgz')):
                 subprocess.check_call("tar tfz " + archivefile, shell=True)
             elif archivefile.endswith('.tar'):
                 subprocess.check_call("tar tf " + archivefile, shell=True)
@@ -424,6 +424,8 @@ class Utils(object):
                 subprocess.check_call("gunzip -t " + archivefile, shell=True)
             elif archivefile.endswith('.zip'):
                 subprocess.check_call("unzip -t " + archivefile, shell=True)
+            else:
+                logger.warn("archive_check: unable to process check call for '" + str(archivefile) + "'")
         except CalledProcessError as uncompresserror:
             logger.error("Archive integrity error of %s: %s" % (archivefile, str(uncompresserror)))
             return False
@@ -445,7 +447,7 @@ class Utils(object):
         is_archive = False
         logger = logging.getLogger('biomaj')
         try:
-            if archivefile.endswith('.tar.gz'):
+            if archivefile.endswith(('.tar.gz', '.tgz')):
                 subprocess.check_call("tar xfz " + archivefile + " --overwrite -C " + os.path.dirname(archivefile), shell=True)
                 is_archive = True
             elif archivefile.endswith('.tar'):
@@ -460,8 +462,13 @@ class Utils(object):
             elif archivefile.endswith('.zip'):
                 subprocess.check_call("unzip -o " + archivefile + " -d " + os.path.dirname(archivefile), shell=True)
                 is_archive = True
+            else:
+                raise Exception("uncompress: Unknown file extension in '" + str(archivefile) + "'")
         except CalledProcessError as uncompresserror:
             logger.error("Uncompress error of %s: %s" % (archivefile, str(uncompresserror)))
+            return False
+        except Exception as e:
+            logger.error(e)
             return False
 
         if is_archive:
