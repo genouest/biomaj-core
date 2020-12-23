@@ -1,63 +1,91 @@
+3.0.27 [UNRELEASED]:
+   add .tgz extension support
+
 3.0.26:
    check use_ldap and use_elastic as bool (true/false or 0/1)
+
 3.0.25:
    utils/get_folder_size: if file not found, catch error and continue
+
 3.0.24:
    get_more_recent_file, return also file info
+
 3.0.23:
    PR #9 Add missing ssh defaults for download
+
 3.0.21 [3.0.22 ,tag issue]:
    Pin elasticsearch dependency, v7 breaks some API calls
+
 3.0.20:
    PR #7 from institut-de-genomique/retry_method, rename default values of retryer.
    Rename wait_condition to wait_policy in default values
    PR #6 from institut-de-genomique/retry_method, add default values for retryer
    Add default values for retryer (see the corresponding branch biomaj-download).
+
 3.0.19:
   Add ftps and directftps protocols
   #4 Harden hardlinks
   copy_files_with_regexp: remove duplicates
   Add utils fonctions
   Code cleanup
+
 3.0.18:
   Allow to use hardlinks in copy_files and copy_files_with_regexp
+
 3.0.17:
   Fix --log option
+
 3.0.16:
   Add some warnings if some file is missing
+
 3.0.15:
   Fix check on bank properties config file when args is empty vs not defined
+
 3.0.14:
   Fix checks on local_endpoint_XXX in config.yml
   In rabbitmq not defined on config.yml add an empty dict
+
 3.0.13:
   Add archive integrity checks
+
 3.0.12:
   Add irods support
+
 3.0.11:
   Add get_module_version static method, checks module version and latest version on pypi
   Allow .args fo process to be empty
+
 3.0.10:
   Add env variables WEB_LOCAL_ENDPOINT_XX with XX as a service (defined in utils.py Utils.services) to define an endpoint per service
+
 3.0.9:
   #1 Add checks on bank properties
+
 3.0.8:
   Add DOCKER_URL, MONGO_URL, MONGO_DB env variable in override
   Do not fail on elasticsearch index creation, just log
   Add rsync check
+
 3.0.7:
   set logging only if necessary
+
 3.0.6:
   Fix configparser import for python 2 vs 3
+
 3.0.5:
   Add config override with env variables
+
 3.0.4:
   Code cleanup
+
 3.0.3:
   Put index management in core
+
 3.0.2:
   Add missing deps
+
 3.0.1:
   Add README etc..
+
 3.0.0:
   separation of biomaj and biomaj_core

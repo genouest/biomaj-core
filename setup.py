@@ -22,7 +22,7 @@ config = {
     'url': 'http://biomaj.genouest.org',
     'download_url': 'http://biomaj.genouest.org',
     'author_email': 'olivier.sallou@irisa.fr',
-    'version': '3.0.26',
+    'version': '3.0.27',
      'classifiers': [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
