@@ -1,4 +1,4 @@
-3.0.27 [UNRELEASED]:
+3.0.27:
    add .tgz extension support
 
 3.0.26:
