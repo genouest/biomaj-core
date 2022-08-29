@@ -1,5 +1,3 @@
-from __future__ import print_function
-from future import standard_library
 from builtins import str
 from builtins import object
 import logging
@@ -11,12 +9,7 @@ import sys
 from biomaj_core.utils import Utils
 from biomaj_core.bmajindex import BmajIndex
 
-if sys.version < '3':
-    import ConfigParser as configparser
-else:
-    import configparser
-
-standard_library.install_aliases()
+import configparser
 
 
 class BiomajConfig(object):

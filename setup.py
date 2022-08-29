@@ -22,7 +22,7 @@ config = {
     'url': 'http://biomaj.genouest.org',
     'download_url': 'http://biomaj.genouest.org',
     'author_email': 'olivier.sallou@irisa.fr',
-    'version': '3.0.27',
+    'version': '3.0.28',
      'classifiers': [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
@@ -35,17 +35,14 @@ config = {
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3'
     ],
+    'python_requires': '>=3',
     'install_requires': [
-                         'future',
                          'elasticsearch',
                          'requests'
                         ],
-    'tests_require': ['nose', 'mock'],
-    'test_suite': 'nose.collector',
+    'tests_require': ['pytest', 'mock'],
     'packages': find_packages(),
     'include_package_data': True,
     'name': 'biomaj_core'

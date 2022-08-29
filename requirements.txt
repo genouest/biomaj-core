@@ -1,5 +1,4 @@
-nose
+pytest
 mock
-future
 elasticsearch==5.5.3
 requests

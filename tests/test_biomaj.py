@@ -1,19 +1,14 @@
-from __future__ import print_function
-
-from nose.tools import *
-from nose.plugins.attrib import attr
-
 import shutil
 import os
 import sys
 import tempfile
 import stat
+import pytest
 
 from biomaj_core.config import BiomajConfig
 from biomaj_core.utils import Utils
 from biomaj_core.bmajindex import BmajIndex
 
-import unittest
 
 
 class UtilsForTest:
@@ -98,8 +93,8 @@ class UtilsForTest:
         for prop in properties:
             from_file = os.path.join(curdir, prop)
             to_file = os.path.join(self.conf_dir, prop)
-            fout = open(to_file,'w')
-            with open(from_file,'r') as fin:
+            fout = open(to_file,'w', encoding='UTF-8')
+            with open(from_file,'r', encoding='UTF-8') as fin:
                 for line in fin:
                     if line.startswith('remote.dir'):
                         fout.write("remote.dir="+os.path.join(curdir,
@@ -117,8 +112,8 @@ class UtilsForTest:
         self.global_properties = os.path.join(self.conf_dir, 'global.properties')
         curdir = os.path.dirname(os.path.realpath(__file__))
         global_template = os.path.join(curdir, 'global.properties')
-        fout = open(self.global_properties, 'w')
-        with open(global_template,'r') as fin:
+        fout = open(self.global_properties, 'w', encoding='UTF-8')
+        with open(global_template,'r', encoding='UTF-8') as fin:
             for line in fin:
                 if line.startswith('conf.dir'):
                     fout.write("conf.dir="+self.conf_dir+"\n")
@@ -140,8 +135,8 @@ class UtilsForTest:
         self.global_properties_hl = os.path.join(self.conf_dir, 'global_hardlinks.properties')
         curdir = os.path.dirname(os.path.realpath(__file__))
         global_template = os.path.join(curdir, 'global_hardlinks.properties')
-        fout = open(self.global_properties_hl, 'w')
-        with open(global_template,'r') as fin:
+        fout = open(self.global_properties_hl, 'w', encoding='UTF-8')
+        with open(global_template,'r', encoding='UTF-8') as fin:
             for line in fin:
                 if line.startswith('conf.dir'):
                     fout.write("conf.dir="+self.conf_dir+"\n")
@@ -158,12 +153,12 @@ class UtilsForTest:
         fout.close()
 
 
-class TestBiomajUtils(unittest.TestCase):
+class TestBiomajUtils():
 
-    def setUp(self):
+    def setup_method(self, m):
         self.utils = UtilsForTest()
 
-    def tearDown(self):
+    def teardown_method(self, m):
         self.utils.clean()
 
     def test_properties_override(self):
@@ -171,10 +166,10 @@ class TestBiomajUtils(unittest.TestCase):
                                  allow_user_config=False)
         config = BiomajConfig('local')
         ldap_host = config.get('ldap.host')
-        self.assertTrue(ldap_host == 'localhost')
+        assert (ldap_host == 'localhost')
         os.environ['BIOMAJ_LDAP_HOST'] = 'someserver'
         ldap_host = config.get('ldap.host')
-        self.assertTrue(ldap_host == 'someserver')
+        assert (ldap_host == 'someserver')
 
     def test_service_config_override(self):
         config = {
@@ -182,17 +177,17 @@ class TestBiomajUtils(unittest.TestCase):
             'web': {'local_endpoint': 'http://localhost'}
         }
         Utils.service_config_override(config)
-        self.assertTrue(config['rabbitmq']['host'] == '1.2.3.4')
+        assert (config['rabbitmq']['host'] == '1.2.3.4')
         os.environ['RABBITMQ_HOST'] = '4.3.2.1'
         Utils.service_config_override(config)
-        self.assertTrue(config['rabbitmq']['host'] == '4.3.2.1')
+        assert (config['rabbitmq']['host'] == '4.3.2.1')
         os.environ['WEB_LOCAL_ENDPOINT_DOWNLOAD'] = 'http://download'
         Utils.service_config_override(config)
-        self.assertTrue(config['web']['local_endpoint_download'] == 'http://download')
+        assert (config['web']['local_endpoint_download'] == 'http://download')
         endpoint = Utils.get_service_endpoint(config, 'download')
-        self.assertTrue(endpoint == 'http://download')
+        assert (endpoint == 'http://download')
         endpoint = Utils.get_service_endpoint(config, 'process')
-        self.assertTrue(endpoint == 'http://localhost')
+        assert (endpoint == 'http://localhost')
 
     def test_use_hardlinks_config(self):
         """
@@ -202,23 +197,22 @@ class TestBiomajUtils(unittest.TestCase):
                                  allow_user_config=False)
         # Must be disabled in local.properties
         config = BiomajConfig('local')
-        self.assertFalse(config.get_bool("use_hardlinks"))
+        assert not config.get_bool("use_hardlinks")
         # Must be enabled for hardlinks.properties (override)
         config = BiomajConfig('hardlinks')
-        self.assertTrue(config.get_bool("use_hardlinks"))
+        assert config.get_bool("use_hardlinks")
         # Reload file with use_hardlinks=1
         BiomajConfig.load_config(self.utils.global_properties_hl,
                                  allow_user_config=False)
         config = BiomajConfig('local')
-        self.assertTrue(config.get_bool("use_hardlinks"))
+        assert config.get_bool("use_hardlinks")
 
     def test_mimes(self):
         fasta_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                   'bank/test2.fasta')
-        (mime, encoding) = Utils.detect_format(fasta_file)
-        self.assertTrue('application/fasta' == mime)
+        (mime, _) = Utils.detect_format(fasta_file)
+        assert 'application/fasta' == mime
 
-    @attr('compress')
     def test_uncompress(self):
         from_file = { 'root': os.path.dirname(os.path.realpath(__file__)),
                       'name': 'bank/test.fasta.gz'
@@ -227,13 +221,13 @@ class TestBiomajUtils(unittest.TestCase):
         to_dir = self.utils.data_dir
         Utils.copy_files([from_file], to_dir)
         Utils.uncompress(os.path.join(to_dir, from_file['name']))
-        self.assertTrue(os.path.exists(to_dir+'/bank/test.fasta'))
+        assert os.path.exists(to_dir+'/bank/test.fasta')
 
     def test_copy_with_regexp(self):
         from_dir = os.path.dirname(os.path.realpath(__file__))
         to_dir = self.utils.data_dir
-        Utils.copy_files_with_regexp(from_dir, to_dir, ['.*\.py'])
-        self.assertTrue(os.path.exists(to_dir+'/biomaj_tests.py'))
+        Utils.copy_files_with_regexp(from_dir, to_dir, [r'.*\.py'])
+        assert os.path.exists(to_dir+'/test_biomaj.py')
 
     def test_copy_with_regexp_hardlink(self):
         """
@@ -257,24 +251,24 @@ class TestBiomajUtils(unittest.TestCase):
                                      use_hardlinks=True)
         # Check if files was copied
         for orig, new in zip(orig_file_full, new_file_full):
-            self.assertTrue(os.path.exists(new))
+            assert (os.path.exists(new))
             # Check if it's really a hardlink. This may fail so we catch
             # any exceptions.
             orig_file_stat = os.stat(orig)
             new_file_stat = os.stat(new)
             try:
-                self.assertTrue(orig_file_stat.st_ino == new_file_stat.st_ino)
+                assert (orig_file_stat.st_ino == new_file_stat.st_ino)
             except Exception:
-                msg = "In %s: copy worked but hardlinks were not used." % self.id()
+                msg = "In %s: copy worked but hardlinks were not used." % orig_file_full
                 print(msg, file=sys.stderr)
 
     def test_copy(self):
         from_dir = os.path.dirname(os.path.realpath(__file__))
-        local_file = 'biomaj_tests.py'
+        local_file = 'test_biomaj.py'
         files_to_copy = [ {'root': from_dir, 'name': local_file}]
         to_dir = self.utils.data_dir
         Utils.copy_files(files_to_copy, to_dir)
-        self.assertTrue(os.path.exists(to_dir+'/biomaj_tests.py'))
+        assert os.path.exists(to_dir+'/test_biomaj.py')
 
     def test_copy_hardlink(self):
         """
@@ -292,18 +286,17 @@ class TestBiomajUtils(unittest.TestCase):
         files_to_copy = [{'root': from_dir, 'name': orig_file}]
         Utils.copy_files(files_to_copy, to_dir, use_hardlinks=True)
         # Check if file was copied
-        self.assertTrue(os.path.exists(new_file_full))
+        assert (os.path.exists(new_file_full))
         # Check if it's really a hardlink. This may fail so we catch
         # any exceptions.
         orig_file_stat = os.stat(orig_file_full)
         new_file_stat = os.stat(new_file_full)
         try:
-            self.assertTrue(orig_file_stat.st_ino == new_file_stat.st_ino)
+            assert orig_file_stat.st_ino == new_file_stat.st_ino
         except Exception:
-            msg = "In %s: copy worked but hardlinks were not used." % self.id()
+            msg = "In %s: copy worked but hardlinks were not used." % orig_file_full
             print(msg, file=sys.stderr)
 
-    @attr('check')
     def test_check_method(self):
         """Check .name, .exe and .args are well check during bank configuration
         checking"""
@@ -311,39 +304,38 @@ class TestBiomajUtils(unittest.TestCase):
         for conf in ['noname', 'noexe', 'noargs', 'prenoname', 'prenoexe',
                      'prenoargs', 'rmnoname', 'rmnoexe', 'rmnoargs']:
             config = BiomajConfig(conf)
-            self.assertFalse(config.check())
+            assert not config.check()
 
 
-@attr('elastic')
-class TestElastic(unittest.TestCase):
+class TestElastic():
     """
     test indexing and search
     """
 
-    def setUp(self):
+    def setup_method(self, m):
         BmajIndex.es = None
         self.utils = UtilsForTest()
-        curdir = os.path.dirname(os.path.realpath(__file__))
+        # curdir = os.path.dirname(os.path.realpath(__file__))
         BiomajConfig.load_config(self.utils.global_properties,
                                  allow_user_config=False)
         if BmajIndex.do_index == False:
-            self.skipTest("Skipping indexing tests due to elasticsearch not available")
+            pytest.skip("Skipping indexing tests due to elasticsearch not available")
         # Delete all banks
-        b = Bank('local')
-        b.banks.remove({})
+        # b = Bank('local')
+        # b.banks.remove({})
         BmajIndex.delete_all_bank('local')
 
         self.config = BiomajConfig('local')
         data_dir = self.config.get('data.dir')
         lock_file = os.path.join(data_dir,'local.lock')
         if os.path.exists(lock_file):
-          os.remove(lock_file)
+            os.remove(lock_file)
 
-    def tearDown(self):
+    def teardown_method(self, m):
         data_dir = self.config.get('data.dir')
         lock_file = os.path.join(data_dir,'local.lock')
         if os.path.exists(lock_file):
-          os.remove(lock_file)
+            os.remove(lock_file)
         self.utils.clean()
         BmajIndex.delete_all_bank('test')
 
@@ -399,7 +391,7 @@ class TestElastic(unittest.TestCase):
             }
           }
         res = BmajIndex.search(query)
-        self.assertTrue(len(res)==2)
+        assert len(res)==2
 
 
     def test_remove_all(self):
@@ -411,4 +403,4 @@ class TestElastic(unittest.TestCase):
           }
         BmajIndex.delete_all_bank('test')
         res = BmajIndex.search(query)
-        self.assertTrue(len(res)==0)
+        assert len(res)==0
