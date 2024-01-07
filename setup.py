@@ -42,7 +42,7 @@ config = {
                          'elasticsearch',
                          'requests'
                         ],
-    'tests_require': ['pytest', 'mock'],
+    'tests_require': ['pytest'],
     'packages': find_packages(),
     'include_package_data': True,
     'name': 'biomaj_core'
