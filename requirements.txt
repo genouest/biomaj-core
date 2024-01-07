@@ -1,4 +1,3 @@
 pytest
-mock
 elasticsearch==5.5.3
 requests
